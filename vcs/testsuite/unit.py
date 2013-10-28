@@ -2,7 +2,7 @@ import os
 import os.path
 import unittest
 
-import vcs_server
+import vcs
 from helper import remove_test_repo, get_vcs
 
 vcs = get_vcs()
@@ -56,7 +56,7 @@ class TestProject(unittest.TestCase):
 		remove_test_repo()
 		
 	def test_get_current_presentation(self):
-		presentation = self.project.test_get_current_presentation()
+		presentation = self.project.get_current_presentation()
 		self.assertFalse(presentation.is_persisted())
 
 	def test_project_start_with_one_presentation(self):

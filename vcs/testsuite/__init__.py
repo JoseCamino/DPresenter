@@ -1,7 +1,7 @@
 import os
 import os.path
 import unittest
-import vcs_server
+import vcs
 
 import unit
 from helper import remove_dir_if_exists, get_vcs

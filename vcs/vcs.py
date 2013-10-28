@@ -3,44 +3,9 @@ import os
 import os.path
 from os.path import isfile
 
-def extract_args(request, *args):
-	return map(lambda x: request[x], args)
-
 class VCS(object):
 	def __init__(self):
 		self.projects_location = "projects"
-
-	def handle_request(self, request):
-		"Handles a request given as a dict object"
-		# TODO: Implement these commands with a decorator
-
-		command = request["command"]
-		project_name = request["projectName"]
-
-		if command == "create project":
-			create_project(project_name)
-		else:
-			# A project already exists. Load it and parse further
-			project = load_project(project_name)
-
-			if command == "list presentations":
-				pass 
-			if command == "get slide data":
-				pass
-			if command == "persist":
-				pass
-			if command == "add slide":
-				pass
-			if command == "move slide":
-				pass
-			if command == "remove slide":
-				pass
-			if command == "checkout":
-				pass
-			if command == "checkin":
-				pass
-			# HISTORY OF A SLIDE
-			# SET PREVIOUS VERSION OF A SLIDE
 
 	def set_projects_location(self, location):
 		self.projects_location = location
