@@ -1,0 +1,4 @@
+{
+	command: "create project",
+	projectName: "testProject"
+}

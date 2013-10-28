@@ -1,0 +1,4 @@
+{
+	command: "listPresentations",
+	projectName: "testProject"
+}
