@@ -1,9 +1,9 @@
 import os.path
 import shutil
 
-import vcs.vcs
+import vcs
 
-vcs = vcs.vcs.VCS()
+vcs = vcs.VCS()
 
 def remove_dir_if_exists(path):
 	if os.path.exists(path):

@@ -13,7 +13,7 @@ def test():
 	"The main test method"
 	remove_dir_if_exists("testprojects")
 	os.mkdir("testprojects")
-	get_vcs().set_projects_location("testprojects")
+	get_vcs().set_project_directory("testprojects")
 
 	tests = flatten([
 		unit.get_tests()
