@@ -19,7 +19,8 @@ class VCSProject(object):
 		return self._repo.load_presentation_list()
 
 class Presentation(object):
-	pass
+	def get_slides(self):
+		return self._repo.load_presentation_slides(self.id)
 
 class CurrentPresentation(Presentation):
 	def __init__(self, project, **data):
@@ -33,10 +34,10 @@ class CurrentPresentation(Presentation):
 		return False
 
 	def persist(self, new_name="Untitled"):
-		self._repo.persist_presentation(self, new_name)
+		return self._repo.persist_presentation(self, new_name)
 
 	def add_slide(self):
-		pass
+		self._repo.add_slide(self.id, "Untitled")
 
 	def checkout(self, slide):
 		pass
@@ -56,7 +57,8 @@ class PersistedPresentation(Presentation):
 		return True
 
 	def rename(self, new_name):
-		pass
+		self._repo.rename_presentation(self.id, new_name)
+		self.name = new_name
 
 class FileRepository(object):
 	"""
@@ -98,17 +100,50 @@ class FileRepository(object):
 				(id integer primary key autoincrement, name text)
 				""")
 
+			c.execute("""
+				CREATE TABLE slides
+				(id integer primary key autoincrement, name text, original_slide integer)
+				""")
+
+			c.execute("""
+				CREATE TABLE presentation_slides
+				(presentation_id integer, slide_id integer, position integer)
+				""")
+
 		self.create_presentation(CurrentPresentation(self.project, name="current"))
 
 	def persist_presentation(self, current_presentation, new_name):
 		"Used to add non-current presentations to the project"
 
-		# first copy the presentation
-		new_presentation = PersistedPresentation(self.project, 
-			name = new_name
-		)
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
 
-		self.create_presentation(new_presentation)
+			c.execute("""
+				INSERT INTO presentations (name)
+				VALUES (?)
+				""", [new_name])
+			new_presentation_id = c.lastrowid
+
+			# Even though current_presentation may have slides already loaded, they're probably old. Therefore,
+			# We load them ourselves
+			slide_ids = self.load_presentation_slides(current_presentation.id)
+			for (i, slide_id) in enumerate(slide_ids):
+				c.execute("""
+					INSERT INTO presentation_slides (presentation_id, slide_id, position)
+					VALUES (?, ?, ?)
+					""", [new_presentation_id, slide_id, i])
+
+			return new_presentation_id
+
+	def rename_presentation(self, pid, new_name):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				UPDATE presentations
+				SET name = ?
+				WHERE id = ?
+				""", [new_name, pid])
 
 	def create_presentation(self, presentation):
 		"Creates a new presentation."
@@ -185,3 +220,40 @@ class FileRepository(object):
 				return CurrentPresentation(self.project, **presentation_data)
 			else:
 				return PersistedPresentation(self.project, **presentation_data) 
+
+	def load_presentation_slides(self, pid):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				SELECT slide_id
+				FROM presentation_slides
+				WHERE presentation_id = ?
+				ORDER BY position ASC
+				""", [pid])
+
+			# Todo: return more than just the slide ids
+			return [row[0] for row in c.fetchall()]
+
+	def add_slide(self, pid, slide_name):
+		"Adds an empty slide to the presentation. TODO: perhaps just get the current presentation id instead of retrieving it?"
+
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			# Add the slide to the database
+			c.execute("""
+				INSERT INTO slides (name, original_slide)
+				VALUES (?, NULL)
+				""", [slide_name])
+
+			slide_id = c.lastrowid
+
+			# TODO: add the empty slide to the file system
+
+			# Register this slide as part of the presentation.
+			# TODO: new slide should be at the end. Make sure to update position
+			c.execute("""
+				INSERT INTO presentation_slides (presentation_id, slide_id)
+				VALUES (?, ?)
+				""", [pid, slide_id])			

@@ -83,29 +83,51 @@ class TestPresentation(unittest.TestCase):
 	def setUp(self):
 		remove_test_repo()
 		self.project = vcs.create_project("testrepo")
+		self.presentation = self.project.get_current_presentation()
 
 	def tearDown(self):
 		remove_test_repo()
 
 	def test_persisting_adds_a_presentation(self):
-		self.project.get_presentation_list()[0].persist()
+		self.presentation.persist()
 		self.assertEqual(len(self.project.get_presentation_list()), 2)
 
 	def test_persisting_with_name_sets_presentation_name(self):
-		self.project.get_current_presentation().persist("testName")
+		self.presentation.persist("testName")
 		self.assertEqual(self.project.get_presentation_list()[1].name, "testName")
 
-	def test_can_add_many_presentations(self):
-		self.project.get_presentation_list()[0].persist()
-		self.project.get_presentation_list()[0].persist()
-		self.project.get_presentation_list()[0].persist()
+	def test_persist_returns_new_slide_id(self):
+		saved_id = self.presentation.persist("testName")
+		saved_presentation = self.project.get_presentation(saved_id)		
+		self.assertEqual(saved_presentation.name, "testName")
+
+	def test_persisting_keeps_the_same_slides(self):
+		self.presentation.add_slide()
+		self.presentation.add_slide()
+		self.presentation.add_slide()
+
+		saved_id = self.presentation.persist()
+		saved_presentation = self.project.get_presentation(saved_id)
+		self.assertEqual(len(saved_presentation.get_slides()), 3)
+
+	def test_can_persist_many_presentations(self):
+		self.presentation.persist()
+		self.presentation.persist()
+		self.presentation.persist()
 		self.assertEqual(len(self.project.get_presentation_list()), 4)
 
+	def test_renaming_presentations(self):
+		saved_presentation = self.project.get_presentation(self.presentation.persist())
+		saved_presentation.rename("testrename")
+		self.assertEqual(saved_presentation.name, "testrename")
+		self.assertEqual(self.project.get_presentation(saved_presentation.id).name, "testrename")
+
 	def test_a_presentation_starts_with_zero_slides(self):
-		pass
+		self.assertEqual(len(self.presentation.get_slides()), 0)
 
 	def test_add_slide(self):
-		pass
+		self.presentation.add_slide()
+		self.assertEqual(len(self.presentation.get_slides()), 1)
 
 	def test_cannot_checkout_twice(self):
 		pass
