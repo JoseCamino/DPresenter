@@ -36,14 +36,14 @@ class CurrentPresentation(Presentation):
 	def persist(self, new_name="Untitled"):
 		return self._repo.persist_presentation(self, new_name)
 
-	def add_slide(self):
-		return self._repo.add_slide(self.id, "Untitled")
+	def add_slide(self, name="Untitled"):
+		return self._repo.add_slide(self.id, name)
 
 	def checkout(self, slide_id, user_id):
 		self._repo.checkout_slide(slide_id, user_id)
 
 	def checkin(self, slide_id, user_id, newData):
-		self._repo.checkin_slide(slide_id, user_id, newData)
+		return self._repo.checkin_slide(slide_id, user_id, newData)
 
 class PersistedPresentation(Presentation):
 	def __init__(self, project, **data):
@@ -307,22 +307,46 @@ class FileRepository(object):
 		
 			# Check if the slide has been checked out
 			c.execute("""
-				SELECT user_id
-				FROM slide_checkout
+				SELECT s.original_slide, c.user_id
+				FROM slide_checkout c
+					JOIN slides s
+						ON s.id = c.slide_id
 				WHERE slide_id = ?
 				""", [slide_id])
 
 			row = c.fetchone()
 			if not row:
 				raise Exception("Slide isn't checked out")
-			elif row[0] != user_id:
+			elif row[1] != user_id:
 				raise Exception("This slide is checked out by another user")
 
+			original_slide = row[0] if row[0] else slide_id
+
+			# Add the new slide to the database
+			c.execute("""
+				INSERT INTO slides (name, original_slide)
+				VALUES ((SELECT name FROM slides WHERE id = ?), ?)
+				""", [slide_id, original_slide])
+			new_slide_id = c.lastrowid
+
+			# Update the current presentation to point to the new slide
+			c.execute("""
+				UPDATE presentation_slides
+				SET slide_id = ?
+				WHERE slide_id = ?
+				  AND presentation_id = (SELECT id
+				  	                     FROM presentations
+				  	                     ORDER BY id ASC
+				  	                     LIMIT 1)
+				""", [new_slide_id, slide_id])
+
+			# Add the new slide data
+			self.save_data("slidedata/%d" % new_slide_id, data)
+
+			# Remove the slide from the checkout list
 			c.execute("""
 				DELETE FROM slide_checkout
 				WHERE slide_id = ?
 				""", [slide_id])
 
-			# Update the actual slide data
-			self.save_data("slidedata/%d" % slide_id, data)
-
+			return new_slide_id
