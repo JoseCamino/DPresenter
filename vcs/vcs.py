@@ -60,6 +60,12 @@ class PersistedPresentation(Presentation):
 		self._repo.rename_presentation(self.id, new_name)
 		self.name = new_name
 
+class Slide(object):
+	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
+	def __init__(self, slide_id, data):
+		self.id = slide_id
+		self.data = data
+
 class FileRepository(object):
 	"""
 	Internal class that deals with the actual logic involved in persistence.
@@ -75,13 +81,13 @@ class FileRepository(object):
 
 	def load_data(self, path):
 		path = self.make_path(path)
-		with open(path, 'r') as file:
-			return json.load(file)
+		with open(path, 'rb') as file:
+			return file.read()
 
 	def save_data(self, path, data):
 		path = self.make_path(path)
-		with open(path, 'w') as file:
-			json.dump(data, file)
+		with open(path, 'wb') as file:
+			file.write(data)
 
 	def connect_to_db(self):
 		return sqlite3.connect(self.make_path('data.db'))
@@ -90,7 +96,7 @@ class FileRepository(object):
 		# TODO: Raise if already initialized
 		repository_path = self.project.path
 		os.mkdir(repository_path)
-		os.mkdir(os.path.join(repository_path, "slide_data"))
+		os.mkdir(os.path.join(repository_path, "slidedata"))
 
 		with self.connect_to_db() as conn:
 			c = conn.cursor()
@@ -130,14 +136,14 @@ class FileRepository(object):
 				""", [new_name])
 			new_presentation_id = c.lastrowid
 
-			# Even though current_presentation may have slides already loaded, they're probably old. Therefore,
-			# We load them ourselves
-			slide_ids = self.load_presentation_slides(current_presentation.id)
-			for (i, slide_id) in enumerate(slide_ids):
+			# Copy slides
+			# TODO: only load slide ids here, not full slides. This is too slow.
+			slides = self.load_presentation_slides(current_presentation.id)
+			for (i, slide) in enumerate(slides):
 				c.execute("""
 					INSERT INTO presentation_slides (presentation_id, slide_id, position)
 					VALUES (?, ?, ?)
-					""", [new_presentation_id, slide_id, i])
+					""", [new_presentation_id, slide.id, i])
 
 			return new_presentation_id
 
@@ -238,8 +244,14 @@ class FileRepository(object):
 				ORDER BY position ASC
 				""", [pid])
 
-			# Todo: return more than just the slide ids
-			return [row[0] for row in c.fetchall()]
+			slides = []
+			for row in c.fetchall():
+				slide_id = row[0]
+				slide_data = self.load_data("slidedata/%d" % slide_id)
+				slide = Slide(slide_id, slide_data)
+				slides.append(slide)
+
+			return slides
 
 	def add_slide(self, pid, slide_name):
 		"Adds an empty slide to the presentation. TODO: perhaps just get the current presentation id instead of retrieving it?"
@@ -255,7 +267,8 @@ class FileRepository(object):
 
 			slide_id = c.lastrowid
 
-			# TODO: add the empty slide to the file system
+			# Add the empty slide to the file system
+			self.save_data("slidedata/%d" % slide_id, "")
 
 			# Register this slide as part of the presentation.
 			# TODO: new slide should be at the end. Make sure to update position
@@ -271,6 +284,7 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			# TODO: Check if the slide exists
+			# TODO: Check if the slide is part of the current presentation
 
 			# Check if the slide has been checked out
 			c.execute("""
@@ -309,4 +323,6 @@ class FileRepository(object):
 				WHERE slide_id = ?
 				""", [slide_id])
 
-			# TODO: Update the actual slide data
+			# Update the actual slide data
+			self.save_data("slidedata/%d" % slide_id, data)
+

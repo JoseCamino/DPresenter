@@ -40,3 +40,6 @@ venv
 
 # SublimeText
 *.sublime-workspace
+
+# Project specific
+testprojects/*
