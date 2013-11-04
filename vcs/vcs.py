@@ -37,13 +37,13 @@ class CurrentPresentation(Presentation):
 		return self._repo.persist_presentation(self, new_name)
 
 	def add_slide(self):
-		self._repo.add_slide(self.id, "Untitled")
+		return self._repo.add_slide(self.id, "Untitled")
 
-	def checkout(self, slide):
-		pass
+	def checkout(self, slide_id, user_id):
+		self._repo.checkout_slide(slide_id, user_id)
 
-	def checkin(self, slide, newData):
-		pass
+	def checkin(self, slide_id, user_id, newData):
+		self._repo.checkin_slide(slide_id, user_id, newData)
 
 class PersistedPresentation(Presentation):
 	def __init__(self, project, **data):
@@ -109,6 +109,12 @@ class FileRepository(object):
 				CREATE TABLE presentation_slides
 				(presentation_id integer, slide_id integer, position integer)
 				""")
+
+			c.execute("""
+				CREATE TABLE slide_checkout
+				(slide_id integer, user_id text, checkout_at integer)
+				""")
+
 
 		self.create_presentation(CurrentPresentation(self.project, name="current"))
 
@@ -256,4 +262,51 @@ class FileRepository(object):
 			c.execute("""
 				INSERT INTO presentation_slides (presentation_id, slide_id)
 				VALUES (?, ?)
-				""", [pid, slide_id])			
+				""", [pid, slide_id])
+
+			return slide_id
+
+	def checkout_slide(self, slide_id, user_id):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			# TODO: Check if the slide exists
+
+			# Check if the slide has been checked out
+			c.execute("""
+				SELECT COUNT(*)
+				FROM slide_checkout
+				WHERE slide_id = ?
+				""", [slide_id])
+
+			if c.fetchone()[0] > 0:
+				raise Exception("Slide has already been checked out")
+
+			c.execute("""
+				INSERT INTO slide_checkout(slide_id, user_id, checkout_at)
+				VALUES (?, ?, datetime('now'))
+				""", [slide_id, user_id])
+
+	def checkin_slide(self, slide_id, user_id, data):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+		
+			# Check if the slide has been checked out
+			c.execute("""
+				SELECT user_id
+				FROM slide_checkout
+				WHERE slide_id = ?
+				""", [slide_id])
+
+			row = c.fetchone()
+			if not row:
+				raise Exception("Slide isn't checked out")
+			elif row[0] != user_id:
+				raise Exception("This slide is checked out by another user")
+
+			c.execute("""
+				DELETE FROM slide_checkout
+				WHERE slide_id = ?
+				""", [slide_id])
+
+			# TODO: Update the actual slide data

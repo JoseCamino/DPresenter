@@ -12,7 +12,8 @@ def get_tests():
 		TestCreateProject,
 		TestLoadProject,
 		TestProject,
-		TestPresentation)
+		TestPresentation,
+		TestCheckinCheckout)
 
 class TestCreateProject(unittest.TestCase):
 	def setUp(self):
@@ -129,11 +130,32 @@ class TestPresentation(unittest.TestCase):
 		self.presentation.add_slide()
 		self.assertEqual(len(self.presentation.get_slides()), 1)
 
+class TestCheckinCheckout(unittest.TestCase):
+	def setUp(self):
+		remove_test_repo()
+		self.project = vcs.create_project("testrepo")
+		self.presentation = self.project.get_current_presentation()
+		self.slide_id = self.presentation.add_slide()
+
+	def tearDown(self):
+		remove_test_repo()
+
 	def test_cannot_checkout_twice(self):
-		pass
+		self.presentation.checkout(self.slide_id, "testuser1")
+		with self.assertRaises(Exception):
+			self.presentation.checkout(self.slide_id, "testuser2")
+
+	def test_checkin_requires_same_user(self):
+		self.presentation.checkout(self.slide_id, "testuser1")
+		with self.assertRaises(Exception):
+			self.presentation.checkin(self.slide_id, "testuser2", "TEST DATA")
 
 	def test_checkin_works_after_checkout(self):
-		pass
+		self.presentation.checkout(self.slide_id, "testuser")
+		self.presentation.checkin(self.slide_id, "testuser", "TEST DATA")
+		# TODO: Check that the slide isn't checked out
+		# TODO: Check that the data has been updated
 
 	def test_checkin_fails_before_checkout(self):
-		pass
+		with self.assertRaises(Exception):
+			self.presentation.checkin(self.slide_id, "testuser", "TEST DATA")
