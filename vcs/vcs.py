@@ -18,6 +18,9 @@ class VCSProject(object):
 	def get_presentation_list(self):
 		return self._repo.load_presentation_list()
 
+	def get_slide(self, slide_id):
+		return self._repo.load_slide(slide_id)
+
 class Presentation(object):
 	def get_slides(self):
 		return self._repo.load_presentation_slides(self.id)
@@ -62,13 +65,17 @@ class PersistedPresentation(Presentation):
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
-	def __init__(self, slide_id, data):
+	def __init__(self, project, slide_id):
+		self.project = project
 		self.id = slide_id
-		self.data = data
+
+	@property
+	def data(self):
+		return self.project._repo.load_slide_data(self.id)
 
 class FileRepository(object):
 	"""
-	Internal class that deals with the actual logic involved in persistence.
+	Internal class that deals with the actual persistence logic.
 	TODO: Perhaps split this into a facade for actual plumbing, so that we don't have to
 	keep reopening sqlite instances
 	"""
@@ -247,11 +254,31 @@ class FileRepository(object):
 			slides = []
 			for row in c.fetchall():
 				slide_id = row[0]
-				slide_data = self.load_data("slidedata/%d" % slide_id)
-				slide = Slide(slide_id, slide_data)
+				slide = Slide(self.project, slide_id)
 				slides.append(slide)
 
 			return slides
+
+	def load_slide(self, slide_id):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			# todo: load more data
+			c.execute("""
+				SELECT slide_id
+				FROM presentation_slides
+				WHERE slide_id = ?
+				""", [slide_id])
+
+			row = c.fetchone()
+			if row:
+				slide_id = row[0]
+				return Slide(self.project, slide_id)
+
+			raise Exception("Slide with id %s doesn't exist" % slide_id)
+
+	def load_slide_data(self, slide_id):
+		return self.load_data("slidedata/%d" % slide_id)
 
 	def add_slide(self, pid, slide_name):
 		"Adds an empty slide to the presentation. TODO: perhaps just get the current presentation id instead of retrieving it?"

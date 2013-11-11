@@ -140,6 +140,12 @@ class TestCheckinCheckout(unittest.TestCase):
 	def tearDown(self):
 		remove_test_repo()
 
+	def test_checkout_checkin(self):
+		self.presentation.checkout(self.slide_id, "testuser")
+		newSlideId = self.presentation.checkin(self.slide_id, "testuser", "TEST DATA")
+		# TODO: Check that the slide isn't checked out
+		self.assertEqual(self.project.get_slide(newSlideId).data, "TEST DATA")
+
 	def test_cannot_checkout_twice(self):
 		self.presentation.checkout(self.slide_id, "testuser1")
 		with self.assertRaises(Exception):
@@ -149,12 +155,6 @@ class TestCheckinCheckout(unittest.TestCase):
 		self.presentation.checkout(self.slide_id, "testuser1")
 		with self.assertRaises(Exception):
 			self.presentation.checkin(self.slide_id, "testuser2", "TEST DATA")
-
-	def test_checkin_works_after_checkout(self):
-		self.presentation.checkout(self.slide_id, "testuser")
-		self.presentation.checkin(self.slide_id, "testuser", "TEST DATA")
-		# TODO: Check that the slide isn't checked out
-		# TODO: Check that the data has been updated
 
 	def test_checkin_fails_before_checkout(self):
 		with self.assertRaises(Exception):
