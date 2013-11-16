@@ -94,8 +94,8 @@ class Parser:
       pptx = os.path.abspath(file_path)
       output_folder = os.path.abspath(output_dir)
 
-      path = image.generateFromPpt(pptx, output_folder, no_of_slides)
-      return path
+      image_paths = image.generateFromPpt(pptx, output_folder, no_of_slides)
+      return image_paths
 
 
    @staticmethod
@@ -121,8 +121,8 @@ class Parser:
       pptx_dir = os.path.abspath(pptx)
       output_folder = os.path.abspath(output_dir)
       
-      path = image.generateFromPpt(pptx_dir, output_folder, no_of_slides)
+      image_paths = image.generateFromPpt(pptx_dir, output_folder, no_of_slides)
 
       os.remove(pptx)
 
-      return path
+      return image_paths
