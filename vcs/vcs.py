@@ -30,16 +30,38 @@ class VCSProject(object):
 		return self._repo.load_slide(slide_id)
 
 class Presentation(object):
-	def get_slides(self):
+	def __init__(self, project, **data):
+		self._id = data.get('id', -1)
+		self._name = data['name']
+		self._project = project
+		self._repo = project._repo
+
+	@property
+	def id(self):
+	    return self._id
+
+	@property
+	def name(self):
+		return self._name
+
+	@property
+	def project(self):
+		return self._project
+
+	@property
+	def slides(self):
+		"""
+		Returns a list of slide objects.
+		These slides are loaded from the database when this function is called.
+		"""
 		return self._repo.load_presentation_slides(self.id)
 
+	def is_persisted(self):
+		raise NotImplementedError
+
 class CurrentPresentation(Presentation):
-	def __init__(self, project, **data):
-		self.id = data.get('id', -1)
-		self.name = data['name']
-		self.project = project
-		self._repo = project._repo
-		self.slides = []
+	def __init__(self, *args, **kwargs):
+		super(CurrentPresentation, self).__init__(*args, **kwargs)
 
 	def is_persisted(self):
 		return False
@@ -57,25 +79,29 @@ class CurrentPresentation(Presentation):
 		return self._repo.checkin_slide(slide_id, user_id, newData)
 
 class PersistedPresentation(Presentation):
-	def __init__(self, project, **data):
-		self.id = data.get('id', -1)
-		self.name = data['name']
-		self.project = project
-		self._repo = project._repo
-		self.slides = []
+	def __init__(self, *args, **kwargs):
+		super(PersistedPresentation, self).__init__(*args, **kwargs)
 
 	def is_persisted(self):
 		return True
 
 	def rename(self, new_name):
 		self._repo.rename_presentation(self.id, new_name)
-		self.name = new_name
+		self._name = new_name
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
 	def __init__(self, project, slide_id):
-		self.project = project
-		self.id = slide_id
+		self._project = project
+		self._id = slide_id
+
+	@property
+	def id(self):
+		return self._id
+
+	@property
+	def project(self):
+	    return self._project
 
 	@property
 	def data(self):

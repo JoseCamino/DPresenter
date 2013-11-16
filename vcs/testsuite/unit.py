@@ -109,7 +109,7 @@ class TestPresentation(unittest.TestCase):
 
 		saved_id = self.presentation.persist()
 		saved_presentation = self.project.get_presentation(saved_id)
-		self.assertEqual(len(saved_presentation.get_slides()), 3)
+		self.assertEqual(len(saved_presentation.slides), 3)
 
 	def test_can_persist_many_presentations(self):
 		self.presentation.persist()
@@ -124,11 +124,11 @@ class TestPresentation(unittest.TestCase):
 		self.assertEqual(self.project.get_presentation(saved_presentation.id).name, "testrename")
 
 	def test_a_presentation_starts_with_zero_slides(self):
-		self.assertEqual(len(self.presentation.get_slides()), 0)
+		self.assertEqual(len(self.presentation.slides), 0)
 
 	def test_add_slide(self):
 		self.presentation.add_slide()
-		self.assertEqual(len(self.presentation.get_slides()), 1)
+		self.assertEqual(len(self.presentation.slides), 1)
 
 class TestCheckinCheckout(unittest.TestCase):
 	def setUp(self):

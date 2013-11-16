@@ -42,5 +42,5 @@ if __name__ == '__main__':
     presentation.checkout(slide1, "testuser")
 
     print("Created slides: ")
-    for (i, slide) in enumerate(presentation.get_slides()):
+    for (i, slide) in enumerate(presentation.slides):
     	print("Slide #%d: %s" % (i, slide.data))

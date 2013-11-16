@@ -57,6 +57,6 @@ slide2 = presentation.checkin(slide2, "testuser", "This is slide 2 (updated)")
 presentation.checkout(slide1, "testuser")
 
 print("Created slides: ")
-for (i, slide) in enumerate(presentation.get_slides()):
+for (i, slide) in enumerate(presentation.slides):
 	print("Slide #%d: %s" % (i, slide.data))
 ```
