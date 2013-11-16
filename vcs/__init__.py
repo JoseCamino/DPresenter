@@ -11,7 +11,11 @@ class VCS(object):
         self.projects_location = location
 
     def load_project(self, name):
-        "Loads a new project if it exists. Otherwise throws an exception."
+        """
+        Loads a new project if it exists and returbns a VCSProject. 
+        Otherwise throws an exception.
+        """
+        
         path = os.path.join(self.projects_location, name)
         if not os.path.exists(path):
             raise Exception("Project doesn't exist")
@@ -19,7 +23,11 @@ class VCS(object):
         return VCSProject(path)
         
     def create_project(self, name):
-        "Creates a new project if it doesn't exists. Otherwise throws an exception."
+        """
+        Creates a new project if it doesn't exists and returns a VCSProject. 
+        Otherwise throws an exception.
+        """
+
         path = os.path.join(self.projects_location, name)
         if os.path.exists(path):
             raise Exception("Directory already exists")

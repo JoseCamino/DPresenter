@@ -5,20 +5,28 @@ import sqlite3
 from os.path import isfile
 
 class VCSProject(object):
+	"""
+	Represents a single project being persisted by version control.
+	"""
+
 	def __init__(self, path):
 		self.path = path
 		self._repo = FileRepository(self)
 
 	def get_presentation(self, presentation_id):
+		"Returns the presentation with the given presentation id"
 		return self._repo.load_presentation(presentation_id)
 
 	def get_current_presentation(self):
+		"Returns the current non-persisted presentation"
 		return self._repo.load_current_presentation()
 		
 	def get_presentation_list(self):
+		"Returns a list of every single presentation"
 		return self._repo.load_presentation_list()
 
 	def get_slide(self, slide_id):
+		"Retrieves a slide with the given slide id"
 		return self._repo.load_slide(slide_id)
 
 class Presentation(object):
