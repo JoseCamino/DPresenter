@@ -4,16 +4,23 @@ class ParserFacade:
    'A facade class for accessing the Parser subsystem'
 
    @staticmethod
-   def mergeSlides(slides, output_path):
+   def mergeSlides(slides):
       'Calls the mergeSlides() static method from the Parser class'
-      return Parser.mergeSlides(slides, output_path)
+      return Parser.mergeSlides(slides)
 
    @staticmethod
-   def splitDeck(deck, output_dir):
+   def splitDeck(deck):
    	'Calls the splitDeck() static method from the Parser class'
-   	return Parser.splitDeck(deck, output_dir)
+   	return Parser.splitDeck(deck)
 
    @staticmethod
-   def generateImage(file_path, output_dir):
+   def generateImageFromFile(file_path, output_dir):
    	'Calls the generateImage() static method from the Parser class'
-   	return Parser.generateImage(file_path, output_dir)
+   	return Parser.generateImageFromFile(file_path, output_dir)
+
+   @staticmethod
+   def generateImageFromData(data, output_dir):
+      'Calls the generateImageFromData() static method from the Parser class'
+      return Parser.generateImageFromData(data, output_dir)  
+
+
