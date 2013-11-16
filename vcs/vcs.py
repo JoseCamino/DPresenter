@@ -57,6 +57,7 @@ class Presentation(object):
 		return self._repo.load_presentation_slides(self.id)
 
 	def is_persisted(self):
+		"Returns true if this slide is persisted. Otherwise returns false."
 		raise NotImplementedError
 
 class CurrentPresentation(Presentation):
@@ -67,15 +68,25 @@ class CurrentPresentation(Presentation):
 		return False
 
 	def persist(self, new_name="Untitled"):
+		"""
+		Creates a new presentation that has the same slide data as this one.
+		Returns the newly created presentation's id
+		"""
 		return self._repo.persist_presentation(self, new_name)
 
 	def add_slide(self, name="Untitled"):
+		"Adds a new completely empty slide to the end of the project"
 		return self._repo.add_slide(self.id, name)
 
 	def checkout(self, slide_id, user_id):
+		"Checks out a slide, preventing checkout by other users"
 		self._repo.checkout_slide(slide_id, user_id)
 
 	def checkin(self, slide_id, user_id, newData):
+		"""
+		Checks in a slide, and returns the newly created slide's id.
+		Fails if the slide hasn't already been checked out by "user_id"
+		"""
 		return self._repo.checkin_slide(slide_id, user_id, newData)
 
 class PersistedPresentation(Presentation):
@@ -86,6 +97,7 @@ class PersistedPresentation(Presentation):
 		return True
 
 	def rename(self, new_name):
+		"Renames this presentation"
 		self._repo.rename_presentation(self.id, new_name)
 		self._name = new_name
 
@@ -105,6 +117,10 @@ class Slide(object):
 
 	@property
 	def data(self):
+		"""
+		Retrieves the actual data contained in this slide. Slide data is not retrieved
+		until this is accessed.
+		"""
 		return self.project._repo.load_slide_data(self.id)
 
 class FileRepository(object):
