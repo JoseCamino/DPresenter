@@ -85,6 +85,9 @@ class Parser:
    @staticmethod
    def generateImageFromFile(file_path, output_dir):
       'Generates an image file from each slide. Returns the paths to the images.'
+      #file_path = file_path.replace("\\", "/")
+      #output_dir = output_dir.replace("\\", "/")
+
       presentation = PptxFile(file_path)
       no_of_slides = len(presentation.getSlides())
       presentation.destroy() #Delete extracted folder
@@ -101,6 +104,8 @@ class Parser:
    @staticmethod
    def generateImageFromData(data, output_dir):
       'Generates an image file from each slide. Input is the binary data of the slide or deck. Returns the paths to the images.'
+
+      #output_dir = output_dir.replace("\\", "/")
 
       temp_folder = "Files/Temp"
       bin = temp_folder + "/File.bin"
@@ -126,3 +131,21 @@ class Parser:
       os.remove(pptx)
 
       return image_paths
+
+
+   @staticmethod
+   def generateNewSlide():
+      'Generates a blank slide.'
+      temp_folder = "Files/Temp"
+      bin = temp_folder + "/NewSlide.bin"
+      pptx = "Files/default_slide.pptx"
+
+      if not (os.path.exists(temp_folder)):
+         os.makedirs(temp_folder)
+
+      shutil.copy(pptx, bin)
+
+      data = open(bin,"rb").read()
+      os.remove(bin)
+
+      return data
