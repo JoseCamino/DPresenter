@@ -76,9 +76,9 @@ class CurrentPresentation(Presentation):
 		"""
 		return self._repo.persist_presentation(self, new_name)
 
-	def add_slide(self, name="Untitled"):
+	def add_slide(self, name="Untitled", data=""):
 		"Adds a new completely empty slide to the end of the project"
-		return self._repo.add_slide(self.id, name)
+		return self._repo.add_slide(self.id, name, data)
 
 	def checkout(self, slide_id, user_id):
 		"Checks out a slide, preventing checkout by other users"
@@ -102,6 +102,11 @@ class PersistedPresentation(Presentation):
 		"Renames this presentation"
 		self._repo.rename_presentation(self.id, new_name)
 		self._name = new_name
+
+class SlideList(list):
+	@property
+	def data(self):
+		return [slide.data for slide in self]
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
@@ -303,7 +308,7 @@ class FileRepository(object):
 				ORDER BY position ASC
 				""", [pid])
 
-			slides = []
+			slides = SlideList()
 			for row in c.fetchall():
 				slide_id = row[0]
 				slide = Slide(self.project, slide_id)
@@ -332,7 +337,7 @@ class FileRepository(object):
 	def load_slide_data(self, slide_id):
 		return self.load_data("slidedata/%d" % slide_id)
 
-	def add_slide(self, pid, slide_name):
+	def add_slide(self, pid, slide_name, data):
 		"Adds an empty slide to the presentation. TODO: perhaps just get the current presentation id instead of retrieving it?"
 
 		with self.connect_to_db() as conn:
@@ -347,7 +352,7 @@ class FileRepository(object):
 			slide_id = c.lastrowid
 
 			# Add the empty slide to the file system
-			self.save_data("slidedata/%d" % slide_id, "")
+			self.save_data("slidedata/%d" % slide_id, data)
 
 			# Register this slide as part of the presentation.
 			# TODO: new slide should be at the end. Make sure to update position

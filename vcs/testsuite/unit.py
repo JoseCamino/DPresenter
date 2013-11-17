@@ -13,6 +13,7 @@ def get_tests():
 		TestLoadProject,
 		TestProject,
 		TestPresentation,
+		TestSlides,
 		TestCheckinCheckout)
 
 class TestCreateProject(unittest.TestCase):
@@ -129,6 +130,27 @@ class TestPresentation(unittest.TestCase):
 	def test_add_slide(self):
 		self.presentation.add_slide()
 		self.assertEqual(len(self.presentation.slides), 1)
+
+	def test_add_slide_with_data(self):
+		self.presentation.add_slide(data="testdata")
+		self.assertEqual(self.presentation.slides[0].data, "testdata")
+
+class TestSlides(unittest.TestCase):
+	def setUp(self):
+		remove_test_repo()
+		self.project = vcs.create_project("testrepo")
+		self.presentation = self.project.current_presentation
+		self.presentation.add_slide(data="slide1")
+		self.presentation.add_slide(data="slide2")
+
+	def tearDown(self):
+		remove_test_repo()
+
+	def test_get_multiple_slide_data(self):
+		data = self.presentation.slides.data
+		self.assertEqual(len(data), 2)
+		self.assertEqual(data[0], "slide1")
+		self.assertEqual(data[1], "slide2")
 
 class TestCheckinCheckout(unittest.TestCase):
 	def setUp(self):
