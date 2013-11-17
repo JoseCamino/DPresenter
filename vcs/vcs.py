@@ -14,6 +14,10 @@ class VCSProject(object):
 		self._repo = FileRepository(self)
 
 	@property
+	def type(self):
+		return "presentation" # Only presentation projects are supported at this time
+
+	@property
 	def current_presentation(self):
 		"Returns the current non-persisted presentation"
 		return self._repo.load_current_presentation()
@@ -57,6 +61,10 @@ class Presentation(object):
 		These slides are loaded from the database when this function is called.
 		"""
 		return self._repo.load_presentation_slides(self.id)
+
+	@property
+	def data(self):
+	    return "this needs to be done"
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
@@ -129,6 +137,9 @@ class Slide(object):
 		until this is accessed.
 		"""
 		return self.project._repo.load_slide_data(self.id)
+
+	def save_thumbnail(self, image_path):
+		pass
 
 class FileRepository(object):
 	"""

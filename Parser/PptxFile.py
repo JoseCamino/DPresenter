@@ -1,7 +1,11 @@
 import os
+import os.path
 import re
 import zipfile
 import shutil
+
+def relative_path(path):
+   return os.path.join(os.path.dirname(__file__), path)
 
 class PptxFile:
    """A class that represents a .pptx Microsoft PowerPoint file.
@@ -486,7 +490,7 @@ class PptxFile:
          os.mkdir(directory)  
       shutil.copy(self.__location + '/docProps/app.xml', output_dir + '/docProps/app.xml')
       shutil.copy(self.__location + '/docProps/core.xml', output_dir + '/docProps/core.xml')
-      shutil.copy('Files/default_thumbnail.jpeg', output_dir + '/docProps/thumbnail.jpeg') # Temporary
+      shutil.copy(relative_path('Files/default_thumbnail.jpeg'), output_dir + '/docProps/thumbnail.jpeg') # Temporary
 
       shutil.copytree(self.__location + '/ppt/theme', output_dir + '/ppt/theme')
       self.__parseThemeRels(output_dir)

@@ -4,6 +4,7 @@ import unittest
 import vcs
 
 import unit
+import presentation_tests
 from helper import remove_dir_if_exists, get_vcs
 
 def flatten(item_list):
@@ -16,7 +17,8 @@ def test():
 	get_vcs().set_project_directory("testprojects")
 
 	tests = flatten([
-		unit.get_tests()
+		unit.get_tests(),
+		presentation_tests.get_tests()
 	])
 
 	loader = unittest.TestLoader()
