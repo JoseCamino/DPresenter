@@ -13,17 +13,19 @@ class VCSProject(object):
 		self.path = path
 		self._repo = FileRepository(self)
 
-	def get_presentation(self, presentation_id):
-		"Returns the presentation with the given presentation id"
-		return self._repo.load_presentation(presentation_id)
-
-	def get_current_presentation(self):
+	@property
+	def current_presentation(self):
 		"Returns the current non-persisted presentation"
 		return self._repo.load_current_presentation()
-		
-	def get_presentation_list(self):
+
+	@property
+	def presentations(self):
 		"Returns a list of every single presentation"
 		return self._repo.load_presentation_list()
+
+	def get_presentation(self, presentation_id):
+		"Returns the presentation with the given presentation id"
+		return self._repo.load_presentation(presentation_id)		
 
 	def get_slide(self, slide_id):
 		"Retrieves a slide with the given slide id"

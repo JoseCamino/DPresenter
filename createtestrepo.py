@@ -15,7 +15,7 @@ if __name__ == '__main__':
     
     # Create project
     project = vcs.create_project("testcreatingprojects")
-    presentation = project.get_current_presentation()
+    presentation = project.current_presentation
 
     # Add slides
     slide1 = presentation.add_slide("Slide 1")
