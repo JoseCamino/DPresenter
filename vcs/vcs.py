@@ -114,7 +114,18 @@ class PersistedPresentation(Presentation):
 class SlideList(list):
 	@property
 	def data(self):
-		return [slide.data for slide in self]
+		return SlideDataList(self)
+
+# Helper used to implement the proxy pattern. Only load slide data when we need it
+class SlideDataList(object):
+	def __init__(self, slides):
+		self._slides = slides
+
+	def __len__(self):
+		return len(self._slides)
+
+	def __getitem__(self, key):
+		return self._slides[key].data
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
@@ -138,7 +149,8 @@ class Slide(object):
 		"""
 		return self.project._repo.load_slide_data(self.id)
 
-	def save_thumbnail(self, image_path):
+	def save_preview(self, image_path):
+		# todo: implement this
 		pass
 
 class FileRepository(object):
