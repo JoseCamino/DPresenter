@@ -131,13 +131,19 @@ class SlideDataList(object):
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
-	def __init__(self, project, slide_id):
+	def __init__(self, project, slide_id, name, original_slide):
 		self._project = project
 		self._id = slide_id
+		self._name = name
+		self._original_slide_id = original_slide
 
 	@property
 	def id(self):
 		return self._id
+
+	@property
+	def name(self):
+		return self._name
 
 	@property
 	def project(self):
@@ -327,8 +333,10 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT slide_id
-				FROM presentation_slides
+				SELECT ps.slide_id, s.name, s.original_slide
+				FROM presentation_slides ps 
+					JOIN slides s
+						ON ps.slide_id = s.id
 				WHERE presentation_id = ?
 				ORDER BY position ASC
 				""", [pid])
@@ -336,7 +344,9 @@ class FileRepository(object):
 			slides = SlideList()
 			for row in c.fetchall():
 				slide_id = row[0]
-				slide = Slide(self.project, slide_id)
+				name = row[1]
+				original_slide = row[2]
+				slide = Slide(self.project, slide_id, name, original_slide)
 				slides.append(slide)
 
 			return slides
@@ -347,15 +357,17 @@ class FileRepository(object):
 
 			# todo: load more data
 			c.execute("""
-				SELECT slide_id
-				FROM presentation_slides
-				WHERE slide_id = ?
+				SELECT id, name, original_slide
+				FROM slides
+				WHERE id = ?
 				""", [slide_id])
 
 			row = c.fetchone()
 			if row:
 				slide_id = row[0]
-				return Slide(self.project, slide_id)
+				name = row[1]
+				original_slide = row[2]
+				return Slide(self.project, slide_id, name, original_slide)
 
 			raise Exception("Slide with id %s doesn't exist" % slide_id)
 

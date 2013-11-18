@@ -140,11 +140,17 @@ class TestSlides(unittest.TestCase):
 		remove_test_repo()
 		self.project = vcs.create_project("testrepo")
 		self.presentation = self.project.current_presentation
-		self.presentation.add_slide(data="slide1")
-		self.presentation.add_slide(data="slide2")
+		self.slide1_id = self.presentation.add_slide("Slide1", data="slide1")
+		self.slide2_id = self.presentation.add_slide(data="slide2")
 
 	def tearDown(self):
 		remove_test_repo()
+
+	def test_retrieve_slide_name(self):
+		self.assertEqual(self.project.get_slide(self.slide1_id).name, "Slide1")
+		self.assertEqual(self.presentation.slides[0].name, "Slide1")
+
+	# Add test for original slide chain soon, once that feature starts to matter
 
 	def test_get_multiple_slide_data(self):
 		data = self.presentation.slides.data
