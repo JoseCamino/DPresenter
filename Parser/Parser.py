@@ -82,7 +82,11 @@ class Parser:
       bin = slide1 + ".bin"
       shutil.move(slide1, bin)
       data = open(bin,"rb").read()
+      
       os.remove(bin)
+      if(os.path.exists(pptx)):
+         os.remove(pptx)
+
       slides_list.append(data)
       slides = slides_list[::-1] # Reverse the list
 
