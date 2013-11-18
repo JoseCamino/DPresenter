@@ -2,6 +2,7 @@ from flask import Flask, session, render_template, request, send_from_directory
 import os
 from werkzeug import secure_filename
 import dbc
+from vcs import VCS
 
 app = Flask(__name__)
 app.debug = True
@@ -114,5 +115,8 @@ def illegal_action(error):
 def bad_request(error):
 	return "<h1>THOU HATH CHOSEN TO BE EVIL AND MAKE BAD REQUESTS!  YOU SHALL BE PURGED BY FIRE!</h1>"
 
+def run_app():
+	app.run(port=80)
+
 if __name__ == "__main__":
-    app.run(port=80)
+    run_app()
