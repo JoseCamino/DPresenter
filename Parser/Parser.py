@@ -146,7 +146,7 @@ class Parser:
       'Generates a blank slide.'
       temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/NewSlide.bin"
-      pptx = "Files/default_slide.pptx"
+      pptx = relative_path("Files/default_slide.pptx")
 
       if not (os.path.exists(temp_folder)):
          os.makedirs(temp_folder)
