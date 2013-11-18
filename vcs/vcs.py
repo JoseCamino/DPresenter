@@ -4,6 +4,8 @@ import os.path
 import sqlite3
 from os.path import isfile
 
+from Parser.ParserFacade import ParserFacade
+
 class VCSProject(object):
 	"""
 	Represents a single project being persisted by version control.
@@ -29,7 +31,7 @@ class VCSProject(object):
 
 	def get_presentation(self, presentation_id):
 		"Returns the presentation with the given presentation id"
-		return self._repo.load_presentation(presentation_id)		
+		return self._repo.load_presentation(presentation_id)
 
 	def get_slide(self, slide_id):
 		"Retrieves a slide with the given slide id"
@@ -84,8 +86,8 @@ class CurrentPresentation(Presentation):
 		"""
 		return self._repo.persist_presentation(self, new_name)
 
-	def add_slide(self, name="Untitled", data=""):
-		"Adds a new completely empty slide to the end of the project"
+	def add_slide(self, name="Untitled", data=None):
+		"Adds a new slide to the end of the project"
 		return self._repo.add_slide(self.id, name, data)
 
 	def checkout(self, slide_id, user_id):
@@ -361,7 +363,12 @@ class FileRepository(object):
 		return self.load_data("slidedata/%d" % slide_id)
 
 	def add_slide(self, pid, slide_name, data):
-		"Adds an empty slide to the presentation. TODO: perhaps just get the current presentation id instead of retrieving it?"
+		"Adds an empty slide to the presentation."
+		# TODO: perhaps just get the current presentation id instead of getting it as a parameter?
+
+		# TODO: Make this information change depending by project type
+		if not data:
+			data = ParserFacade.generateNewSlide()
 
 		with self.connect_to_db() as conn:
 			c = conn.cursor()
