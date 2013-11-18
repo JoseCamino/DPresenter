@@ -150,6 +150,13 @@ class Slide(object):
 	    return self._project
 
 	@property
+	def original(self):
+		if not self._original_slide_id:
+			return None
+
+		return self._project.get_slide(self._original_slide_id)
+
+	@property
 	def data(self):
 		"""
 		Retrieves the actual data contained in this slide. Slide data is not retrieved
@@ -379,7 +386,7 @@ class FileRepository(object):
 		# TODO: perhaps just get the current presentation id instead of getting it as a parameter?
 
 		# TODO: Make this information change depending by project type
-		if not data:
+		if data is None:
 			data = ParserFacade.generateNewSlide()
 
 		with self.connect_to_db() as conn:
