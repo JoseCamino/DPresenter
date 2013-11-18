@@ -12,32 +12,37 @@ app.secret_key = dbc.giveMetheSecretKey()
 
 @app.route("/")
 def login():
-	return render_template("login.html")
+	if 'username' in session:
+		projList = dbc.getProjectList(session['username'])
+		return render_template("index.html", stuff = projList)
+	return render_template("login.html", warning = "")
 
 @app.route("/login.html")
 def logout():
 	session.pop('username', None)
-	return render_template('login.html')
+	return render_template('login.html', warning = "")
 
 @app.route("/index.html", methods = ['POST','GET'])
 def index():
 	error = None
 	if request.method == 'POST':
 		uname = request.form['username']
-		print uname
+		if(uname == ""):
+			return render_template("login.html", warning = "Username field is required.")
 		password = request.form['password']
-		print password
+		if(password == ""):
+			return render_template("login.html", warning = "Password field is required.")
 		if dbc.checkPassword(uname, password):
 			session['username'] = uname
 			projList = dbc.getProjectList(uname)
 			return render_template('index.html', stuff = projList)
 		else:
-			return 'Thou Hath Chosen...poorly...by giving me an invalid username and/or password combination!!!'
+			return render_template("login.html", warning = "Invalid username/password combination.  Please try again.")
 	if 'username' in session:
 		projList = dbc.getProjectList(session['username'])
 		return render_template("index.html", stuff = projList)
 	else:
-		return render_template("login.html")
+		return render_template("login.html", warning = "Please log-in to the system.")
 
 @app.route("/createProject.html")
 def createProject():
@@ -48,21 +53,52 @@ def createProject():
 @app.route("/buildProject.html", methods = ['POST'])
 def buildProject():
 	if 'username' not in session:
-		return render_template("login.html")
+		return render_template("login.html", warning = "Please log-in to the system.")
 	if request.method == 'POST':
 		projName = request.form['projname']
-		return dbc.addProject(session['username'], projName)
+		id_name = dbc.addProject(session['username'], projName)
+		VCS().create_project(str(id_name))
+		return "Success!  //Todo: Redirect."
 	return "This shouldn't happen...ever"
 
 @app.route("/projects/<int:project_id>")
 def show_project(project_id):
 	if 'username' not in session:
-		return render_template("/login.html")
+		return render_template("login.html", warning = "Please log-in to the system.")
 	printMii = []
 	if dbc.getRole(project_id, session['username']) == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id))
 	return "You are viewing project with id %s" % project_id
+
+@app.route("/projects/<int:project_id>/addUserstoProject")
+def add_user_to_project(project_id):
+	if 'username' not in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if not dbc.getRole(project_id, session['username']) == "Project Manager":
+		return not_allowed()
+	return render_template("addUsertoProject.html", project_id = project_id)
+
+@app.route("/projects/<int:project_id>/added.html", methods = ['POST'])
+def added(project_id):
+	if request.method == 'POST':
+		if not 'username' in session:
+			return render_template("login.html", warning = "PLease log-in to the system.")
+		if not dbc.getRole(project_id, session['username']) == "Project Manager":
+			return not_allowed()
+		uname_to_add = request.form['username']
+		if uname_to_add == "":
+			return "Um...need to add a username chief."
+		if not dbc.userExists(uname_to_add):
+			return "User doesn't exist in the system.  Please try again."
+		if dbc.userInProject(uname_to_add, project_id):
+			return "User already exists in the project.  Can't add him again."
+		role_to_add = request.form['role']
+		if not (role_to_add == "Presentation Creator" or "Slide Creator"):
+			return "Invalid role selection.  Please assign as either a Presentation Creator or Slide Creator."
+		dbc.addUserToProject(project_id, uname_to_add, role_to_add)
+		return "Success!"
+	return "This should never happen"
 
 @app.route("/projects/<int:project_id>/downloadPrimary")
 def download_current_presentation(project_id):
@@ -95,25 +131,32 @@ def createNewPresentation():
 
 @app.route("/register.html")
 def register():
-	return render_template('register.html')
+	return render_template('register.html', warning = "")
 
 @app.route("/registered.html", methods = ['POST'])
 def registered():
 	if request.method == 'POST':
-		return dbc.addUser(request.form['FName'], request.form['LName'], request.form['UName'], request.form['password'], request.form['repeatpass'])
-	return "YOU HATH CHOSEN TO ILLEGALLY DO SHITS!  YOU FAIL GOOD SIR"
+		result = dbc.addUser(request.form['FName'], request.form['LName'], request.form['UName'], request.form['password'], request.form['repeatpass'])
+		if not result == "You are now registered into the Dynamic Presenter system!":
+			return render_template("register.html", warning = result)
+		return render_template("login.html", warning = result)		
+	return "This shouldn't happen.  Error 405 handles this."
 
 @app.errorhandler(404)
 def page_not_found(error):
-	return "<h1>THOU HATH FAILED TO FIND WHAT YOU ARE LOOKING FOR!  YOU ARE NOW DOOMED TO DIE!</h1>"
+	return "<h1>Sorry chief, we don't have what you're looking for.  You might wanna try again.  Error 404: Can't Find It</h1>"
 
 @app.errorhandler(405)
 def illegal_action(error):
-	return "<h1>THOU HATH CHOSEN TO DO SHITS ILLEGALLY!  YOU SHALL DIE NOW!</h1>"
+	return "<h1>Please do not attempt to break the system.  Error 405: Illegal action.</h1>"
 
 @app.errorhandler(400)
 def bad_request(error):
-	return "<h1>THOU HATH CHOSEN TO BE EVIL AND MAKE BAD REQUESTS!  YOU SHALL BE PURGED BY FIRE!</h1>"
+	return "<h1>Something went wrong.  Probably bad form requests.  Error 400: Bad form requests.</h1>"
+
+@app.errorhandler(403)
+def not_allowed(error):
+	return "<h1>This is a protected area and you are not allowed to access whatever is in here.  Need super admin priveleges.  Error 403: Access Denied</h1>"
 
 def run_app():
 	app.run(port=80)

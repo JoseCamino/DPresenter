@@ -30,7 +30,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-	<a href="/modifyuserlist.html">Add/Remove Users from Project</a>
+	<a href="{{ url_for("add_user_to_project", project_id = project) }}">Add Users from Project</a>
 	<br>
 	<a href="/assignslide.html">Authorize Users for Checking Out Slides</a>
 	<br>

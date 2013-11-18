@@ -53,6 +53,22 @@ def checkPassword(username, password):
 		if(record[0] == password):
 			return True
 	return False
+
+def userExists(username):
+	sqlcommand = "SELECT username From user_list where username = %s;"
+	cur.execute(sqlcommand, [username])
+	for record in cur:
+		if(record[0] == username):
+			return True
+	return False
+
+def userInProject(username, project_ID):
+	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s;"
+	cur.execute(sqlcommand, [project_ID])
+	for record in cur:
+		if(record[0] == username):
+			return True
+	return False
 	
 def addUser(FName, LName, username, password, repeatpass):
 	sqlcommand = "SELECT username FROM user_list;"
@@ -206,7 +222,12 @@ def addProject(user_ID, project_name):
 	sqlcommand = "INSERT INTO works_on VALUES((SELECT MAX(id) from project_list), %s, 'Project Manager');"
 	cur.execute(sqlcommand, [user_ID])
 	conn.commit()
-	return "Project has been added."
+	sqlcommand = "SELECT MAX(id) from project_list;"
+	cur.execute(sqlcommand)
+	id_of_proj = ""
+	for record in cur:
+		id_of_proj = record[0]
+	return id_of_proj
 	
 def optOut(slide_ID, user_ID):
 	sqlcommand = "SELECT * FROM opt_out_list WHERE slide_ID = %s AND user_ID = %s);"

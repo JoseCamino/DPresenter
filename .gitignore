@@ -44,3 +44,4 @@ venv
 # Project specific
 testprojects/*
 Parser/Files/Temp/*
+projects/*
