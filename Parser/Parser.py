@@ -60,6 +60,11 @@ class Parser:
       if not (os.path.exists(temp_folder)):
          os.makedirs(temp_folder)
 
+      if not (deck[-4:] == 'pptx'):
+         open(bin,"wb").write(deck)
+         shutil.move(bin, pptx)
+         deck = pptx
+
       slides_list = []
       deck = PptxFile(deck)
       lenght = len(deck.getSlides())
