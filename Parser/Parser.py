@@ -3,6 +3,9 @@ import shutil
 from PptxFile import PptxFile
 from Image import Image
 
+def relative_path(path):
+   return os.path.join(os.path.dirname(__file__), path)
+
 class Parser:
    'A factory class that creates PptxFile and Image objects'
 
@@ -10,7 +13,7 @@ class Parser:
    def mergeSlides(slides):
       'Merges any number of slides into a deck. Input is the slides binary data. Returns the path of the deck.'
 
-      temp_folder = "Files/Temp"
+      temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/Slide1.bin"
       s1_pptx = temp_folder + "/Slide1.pptx"
 
@@ -50,7 +53,7 @@ class Parser:
    def splitDeck(deck):
       'Splits a deck into individual slides. Returns a list of slides (as binary data).'
 
-      temp_folder = "Files/Temp"
+      temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/Deck.bin"
       pptx = temp_folder + "/Deck.pptx"
 
@@ -85,8 +88,6 @@ class Parser:
    @staticmethod
    def generateImageFromFile(file_path, output_dir):
       'Generates an image file from each slide. Returns the paths to the images.'
-      #file_path = file_path.replace("\\", "/")
-      #output_dir = output_dir.replace("\\", "/")
 
       presentation = PptxFile(file_path)
       no_of_slides = len(presentation.getSlides())
@@ -105,9 +106,7 @@ class Parser:
    def generateImageFromData(data, output_dir):
       'Generates an image file from each slide. Input is the binary data of the slide or deck. Returns the paths to the images.'
 
-      #output_dir = output_dir.replace("\\", "/")
-
-      temp_folder = "Files/Temp"
+      temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/File.bin"
       pptx = temp_folder + "/File.pptx"
 
@@ -136,7 +135,7 @@ class Parser:
    @staticmethod
    def generateNewSlide():
       'Generates a blank slide.'
-      temp_folder = "Files/Temp"
+      temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/NewSlide.bin"
       pptx = "Files/default_slide.pptx"
 
