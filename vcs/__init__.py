@@ -33,8 +33,14 @@ class VCS(object):
 
         path = os.path.join(self.projects_location, name)
         if os.path.exists(path):
-            raise Exception("Directory already exists")
+            raise Exception("Project already exists")
             
+        # Create the project directory if it doesn't exist
+        try:
+            os.makedirs(self.projects_location)
+        except:
+            pass # Most likely the project directory already exists
+
         # TODO: Move to the repository or some sort of abstract storage mechanism
         vcs = VCSProject(path)
         vcs._repo.create_repository() # NOTE: Should we really get into internals like that here?

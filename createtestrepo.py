@@ -20,7 +20,6 @@ if __name__ == '__main__':
     # Add slides
     slide1 = presentation.add_slide("Slide 1")
     slide2 = presentation.add_slide("Slide 2")
-    slide3 = presentation.add_slide("Slide 3")
 
     # Update slide 1
     presentation.checkout(slide1, "testuser")
@@ -30,16 +29,9 @@ if __name__ == '__main__':
     presentation.checkout(slide2, "testuser")
     slide2 = presentation.checkin(slide2, "testuser", "This is slide 2")
 
-    # Update slide 3
-    presentation.checkout(slide3, "testuser")
-    slide3 = presentation.checkin(slide3, "testuser", "This is slide 3")
-
-    # Update slide 3 again
-    presentation.checkout(slide3, "testuser")
-    slide3 = presentation.checkin(slide3, "testuser", "This is slide 3 (updated)")
-
-    # Leave slide 1 checked out
-    presentation.checkout(slide1, "testuser")
+    # Update slide 2 again
+    presentation.checkout(slide2, "testuser")
+    slide2 = presentation.checkin(slide2, "testuser", "This is slide 2 (updated)")
 
     print("Created slides: ")
     for slide in presentation.slides:
