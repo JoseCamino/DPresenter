@@ -8,50 +8,34 @@
 	"buffers":
 	[
 		{
-			"file": "testvcs.py",
+			"file": "UI/userinterface.py",
 			"settings":
 			{
-				"buffer_size": 41,
+				"buffer_size": 6700,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "vcs/__init__.py",
+			"file": "UI/dbc.py",
 			"settings":
 			{
-				"buffer_size": 1058,
+				"buffer_size": 9114,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "vcs/testsuite/unit.py",
+			"file": "UI/templates/project3.html",
 			"settings":
 			{
-				"buffer_size": 3273,
+				"buffer_size": 574,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "vcs/testsuite/helper.py",
+			"file": "UI/templates/index.html",
 			"settings":
 			{
-				"buffer_size": 238,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "vcs/testsuite/__init__.py",
-			"settings":
-			{
-				"buffer_size": 587,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "createtestrepo.py",
-			"settings":
-			{
-				"buffer_size": 156,
+				"buffer_size": 665,
 				"line_ending": "Windows"
 			}
 		},
@@ -59,7 +43,15 @@
 			"file": "vcs/vcs.py",
 			"settings":
 			{
-				"buffer_size": 4321,
+				"buffer_size": 12238,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "vcs/__init__.py",
+			"settings":
+			{
+				"buffer_size": 1552,
 				"line_ending": "Windows"
 			}
 		}
@@ -88,6 +80,12 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/createtestrepo.py",
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/testsuite/__init__.py",
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/testsuite/helper.py",
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/testsuite/unit.py",
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/__init__.py",
+		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/testvcs.py",
 		"/C/Users/Carlos/Documents/GitHub/DynamicPresenter/vcs/storage.py",
 		"/C/Users/Carlos/Documents/GitHub/DynamicPresenter/createtestrepo.py",
 		"/C/Users/Carlos/Documents/GitHub/DynamicPresenter/senior-project.sublime-workspace",
@@ -118,6 +116,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"current_presentation",
 			"current",
 			"vcs_server",
 			"vcs."
@@ -145,77 +144,77 @@
 			[
 				{
 					"buffer": 0,
-					"file": "testvcs.py",
+					"file": "UI/userinterface.py",
 					"settings":
 					{
-						"buffer_size": 41,
+						"buffer_size": 6700,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								2398,
+								2399
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 315.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "vcs/__init__.py",
+					"file": "UI/dbc.py",
 					"settings":
 					{
-						"buffer_size": 1058,
+						"buffer_size": 9114,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								170,
-								170
+								1740,
+								1740
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 671.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "vcs/testsuite/unit.py",
+					"file": "UI/templates/project3.html",
 					"settings":
 					{
-						"buffer_size": 3273,
+						"buffer_size": 574,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1023,
-								1023
+								488,
+								488
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/HTML/HTML.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -226,44 +225,51 @@
 				},
 				{
 					"buffer": 3,
-					"file": "vcs/testsuite/helper.py",
+					"file": "UI/templates/index.html",
 					"settings":
 					{
-						"buffer_size": 238,
+						"buffer_size": 665,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								40,
-								40
+								416,
+								416
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
 				{
 					"buffer": 4,
-					"file": "vcs/testsuite/__init__.py",
+					"file": "vcs/vcs.py",
 					"settings":
 					{
-						"buffer_size": 587,
+						"buffer_size": 12238,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								138,
-								138
+								888,
+								888
 							]
 						],
 						"settings":
@@ -279,59 +285,28 @@
 				},
 				{
 					"buffer": 5,
-					"file": "createtestrepo.py",
+					"file": "vcs/__init__.py",
 					"settings":
 					{
-						"buffer_size": 156,
+						"buffer_size": 1552,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								156,
-								156
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 6,
-					"file": "vcs/vcs.py",
-					"settings":
-					{
-						"buffer_size": 4321,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4000,
-								4000
+								710,
+								710
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2115.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

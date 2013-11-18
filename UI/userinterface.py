@@ -40,9 +40,9 @@ def index():
 			return render_template("login.html", warning = "Invalid username/password combination.  Please try again.")
 	if 'username' in session:
 		projList = dbc.getProjectList(session['username'])
-		return render_template("index.html", stuff = projList)
+		return render_template("/index.html", stuff = projList)
 	else:
-		return render_template("login.html", warning = "Please log-in to the system.")
+		return render_template("/login.html", warning = "Please log-in to the system.")
 
 @app.route("/createProject.html")
 def createProject():
@@ -65,11 +65,13 @@ def buildProject():
 def show_project(project_id):
 	if 'username' not in session:
 		return render_template("login.html", warning = "Please log-in to the system.")
+
+	project = VCS().load_project(str(project_id)) # todo: catch exception
 	if dbc.getRole(project_id, session['username']) == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id))
 	if dbc.getRole(project_id, session['username']) == 'Slide Creator':
-		printMii = VCS().presentations()
+		printMii = project.presentations
 		return render_template('project3.html', presentationList = printMii, project = project_id, name = dbc.getProjectName(project_id))
 	return "You are viewing project with id %s" % project_id
 
@@ -101,6 +103,10 @@ def added(project_id):
 		dbc.addUserToProject(project_id, uname_to_add, role_to_add)
 		return "Success!"
 	return "This should never happen"
+
+@app.route("/projects/<int:project_id>/presentations/<int:presentation_id>")
+def presentation(project_id, presentation_id):
+	return "Testing"
 
 @app.route("/projects/<int:project_id>/downloadPrimary")
 def download_current_presentation(project_id):
