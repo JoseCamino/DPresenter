@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html>
 	<head></head>
-	<title></title>
+	<title>{{ name }}</title>
 	<body>
-	<script>
-		alert("Hello, world.");
-		var surname = prompt('Greetings, friend! May I inquire as to your surname?');
-	</script>
-		<p1>Good to you meet you <script>document.write(surname);</script>!</p1>
+		<h1>{{ name}}</h1>
+		<table>
+			<tr>
+				<td><h4>Presentation ID</h4></td>
+			</tr>
+		{% for presentation in presentationList %}
+		<tr>
+			<td>{{presentation.id}}</td>
+		</tr>
+		{% endfor %}
+		</table>
+		<p>Current Presentation : {{ currentPresentation.id }}</p>
+
+		<a href = "createPresentation.html">Create a Presentation</a>
+		<a href = "index.html">Return to index</a>
+		<a href = "login.html">Log Out</a>
 	</body>
 </html>

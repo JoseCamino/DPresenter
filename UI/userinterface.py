@@ -65,10 +65,12 @@ def buildProject():
 def show_project(project_id):
 	if 'username' not in session:
 		return render_template("login.html", warning = "Please log-in to the system.")
-	printMii = []
 	if dbc.getRole(project_id, session['username']) == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id))
+	if dbc.getRole(project_id, session['username']) == 'Slide Creator':
+		printMii = VCS().presentations()
+		return render_template('project3.html', presentationList = printMii, project = project_id, name = dbc.getProjectName(project_id))
 	return "You are viewing project with id %s" % project_id
 
 @app.route("/projects/<int:project_id>/addUserstoProject")

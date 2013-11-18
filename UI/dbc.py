@@ -32,6 +32,11 @@ class slideInPresentation(object):
 		self.slide_ID = sli_ID
 		self.page_number = page_num
 
+class slideInProject(object):
+	def construct(self, sli_ID, vers):
+		self.slide_ID = sli_ID
+		self.version = vers
+
 def giveMetheSecretKey():
 	return secretkey
 	
@@ -163,13 +168,23 @@ def getPresentationList(project_ID):
 	return presentationList
 
 def getSlideList(presentation):
-	sqlcommand = "SELECT slide_ID, page_number FROM presentation where presentation_ID = %s;"
+	sqlcommand = "SELECT slide_ID, page_number FROM presentation_contains where presentation_ID = %s;"
 	cur.execute(sqlcommand, [presentation])
 	slideList = []
 	for record in cur:
-		tempslide = slideInPresentation(r)
+		tempslide = slideInPresentation()
 		tempslide.construct(record[0], record[1])
 		slideList.append(tempslide)
+	return slideList
+
+def getSlideListProject(project):
+	sqlcommand = "SELECT id, version FROM slide_list WHERE project_ID = %s;"
+	cur.exeucte(sqlcommand, [project])
+	slideList = []
+	for record in cur:
+		tempslide = slideInProject()
+		tempslide.construct(record[0], record[1])
+		slideList.append(tempSlide)
 	return slideList
 
 def addUserToProject(project, user, role):
