@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+	<head></head>
+	<title>Welcome to the Dynamic Presenter Project!</title>
+	<style>
+		a{color: red;}
+		td, th{border: 1px solid #999; padding: 0.1em 1em;}
+	</style>
+
+	<body>
+	<h1>Projects Page</h1>
+	<table>
+		<tbody>
+			<tr>
+			<th>Project Name</th>
+			<th>Role</th>
+			</tr>
+			{% for project in stuff %}
+			<tr>
+			<td>
+				<a href = "{{ url_for("show_project", project_id=project.project_id) }}">{{ project.project_name }}</a>
+			</td>
+			<td>
+				{{ project.role }}
+			</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br>
+	<a href = "createProject.html"> Create a Project</a>
+	<br>
+	<a href = "login.html">Log Out</a>
+	</body>
+</html>

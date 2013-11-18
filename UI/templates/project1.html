@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+	<title>{{ name }}</title>
+	<head></head>
+	<style>
+	td, th {border: 1px solid #999; padding 0.1em 1em;}
+	</style>
+
+	<body>
+		<h1>{{ name }}</h1>
+		<br>
+		<h2>List of Users in {{ name }}</h2>
+		</br>
+		<table>
+			<tbody>
+				<tr>
+				<td><h4>User</h4></td>
+				<td><h4>Role</h4></td>
+				</tr>				
+				{% for userRole in userList %}
+				<tr>
+					<td>
+						{{ userRole.user_ID }}
+					</td>
+					<td>
+						{{ userRole.role }}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	<a href="/modifyuserlist.html">Add/Remove Users from Project</a>
+	<br>
+	<a href="/assignslide.html">Authorize Users for Checking Out Slides</a>
+	<br>
+	<a href="/index.html">Back to Projects Page</a>
+	<br>
+	<a href="/login.html">Log Out</a>
+	<br>
+	<a href= "{{ url_for("download_current_presentation", project_id = project) }}"> Download Primary Presentation</a>
+	</body>
+</html>
