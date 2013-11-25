@@ -8,50 +8,34 @@
 	"buffers":
 	[
 		{
-			"file": "UI/userinterface.py",
+			"file": "Parser/testsuite/__init__.py",
 			"settings":
 			{
-				"buffer_size": 6700,
+				"buffer_size": 413,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "UI/dbc.py",
+			"file": "Parser/testsuite/unit.py",
 			"settings":
 			{
-				"buffer_size": 9114,
+				"buffer_size": 4369,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "UI/templates/project3.html",
+			"file": "Parser/Image.py",
 			"settings":
 			{
-				"buffer_size": 574,
+				"buffer_size": 1433,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "UI/templates/index.html",
+			"file": "Parser/Parser.py",
 			"settings":
 			{
-				"buffer_size": 665,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "vcs/vcs.py",
-			"settings":
-			{
-				"buffer_size": 12238,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "vcs/__init__.py",
-			"settings":
-			{
-				"buffer_size": 1552,
+				"buffer_size": 4412,
 				"line_ending": "Windows"
 			}
 		}
@@ -80,6 +64,33 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/PptxFile.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/ParserFacade.py",
+		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/Parser.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Parser.py",
+		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/test_split.py",
+		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/test_merge.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/unit.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/vcs.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/helper.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/presentation_tests.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/test_requests/testpresentation.pptx",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/__init__.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/__init__.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/__init__.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/__init__.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/testparser.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/testvcs.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/presentation_tests.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/helper.py",
+		"/C/Users/Jose/Desktop/New Text Document .py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Image.py",
+		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/ParserFacade.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/createtestrepo.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/userinterface.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/dbc.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/templates/project3.html",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/templates/index.html",
 		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/createtestrepo.py",
 		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/testsuite/__init__.py",
 		"/C/Users/Jimmy 2/Documents/GitHub/DynamicPresenter/vcs/testsuite/helper.py",
@@ -116,6 +127,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"module",
+			"testsuite",
 			"current_presentation",
 			"current",
 			"vcs_server",
@@ -139,23 +152,28 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"sheets":
+			[
+			]
+		},
+		{
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "UI/userinterface.py",
+					"file": "Parser/testsuite/__init__.py",
 					"settings":
 					{
-						"buffer_size": 6700,
+						"buffer_size": 413,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2398,
-								2399
+								213,
+								213
 							]
 						],
 						"settings":
@@ -164,25 +182,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 315.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "UI/dbc.py",
+					"file": "Parser/testsuite/unit.py",
 					"settings":
 					{
-						"buffer_size": 9114,
+						"buffer_size": 4369,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1740,
-								1740
+								4368,
+								4368
 							]
 						],
 						"settings":
@@ -191,122 +209,63 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 671.0,
+						"translation.y": 2214.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "UI/templates/project3.html",
+					"file": "Parser/Image.py",
 					"settings":
 					{
-						"buffer_size": 574,
+						"buffer_size": 1433,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								488,
-								488
+								1281,
+								1281
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 216.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "UI/templates/index.html",
+					"file": "Parser/Parser.py",
 					"settings":
 					{
-						"buffer_size": 665,
+						"buffer_size": 4412,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								416,
-								416
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 4,
-					"file": "vcs/vcs.py",
-					"settings":
-					{
-						"buffer_size": 12238,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								888,
-								888
+								0,
+								0
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "vcs/__init__.py",
-					"settings":
-					{
-						"buffer_size": 1552,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								710,
-								710
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
+							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2376.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -342,7 +301,7 @@
 		"cols":
 		[
 			0.0,
-			0.5,
+			0.113183000867,
 			1.0
 		],
 		"rows":
