@@ -66,10 +66,12 @@ class Presentation(object):
 
 	@property
 	def data(self):
-	    return "this needs to be done"
+		# TODO: Load and merge slide data
+		return "this needs to be done"
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
+		# Subclasses need to implement this function
 		raise NotImplementedError
 
 class CurrentPresentation(Presentation):
@@ -239,13 +241,12 @@ class FileRepository(object):
 			new_presentation_id = c.lastrowid
 
 			# Copy slides
-			# TODO: only load slide ids here, not full slides. This is too slow.
-			slides = self.load_presentation_slides(current_presentation.id)
-			for (i, slide) in enumerate(slides):
-				c.execute("""
-					INSERT INTO presentation_slides (presentation_id, slide_id, position)
-					VALUES (?, ?, ?)
-					""", [new_presentation_id, slide.id, i])
+			c.execute("""
+				INSERT INTO presentation_slides (presentation_id, slide_id, position)
+				SELECT ?, slide_id, position
+				FROM presentation_slides
+				WHERE presentation_id = ?
+				""", [new_presentation_id, current_presentation.id])
 
 			return new_presentation_id
 
