@@ -57,6 +57,12 @@ def buildProject():
 	if request.method == 'POST':
 		projName = request.form['projname']
 		id_name = dbc.addProject(session['username'], projName)
+		if(id_name == "Your project name has too few characters.  Please make project names at least 5 characters or more."):
+			return id_name
+		if(id_name == "Your project name has too many characters.  Please make project names no more than 32 characters long."):
+			return id_name
+		if(id_name == "Your Project Name has invalid characters.  Please don't anything other than numbers or characters."):
+			return id_name
 		VCS().create_project(str(id_name))
 		return "Success!  //Todo: Redirect."
 	return "This shouldn't happen...ever"
@@ -73,6 +79,8 @@ def show_project(project_id):
 	if dbc.getRole(project_id, session['username']) == 'Slide Creator':
 		printMii = project.presentations
 		return render_template('project3.html', presentationList = printMii, project = project_id, name = dbc.getProjectName(project_id))
+	if dbc.getRole(project_id, session['username']) == 'Presentation Creator':
+		return render_template('project2.html')
 	return "You are viewing project with id %s" % project_id
 
 @app.route("/projects/<int:project_id>/addUserstoProject")
@@ -83,7 +91,7 @@ def add_user_to_project(project_id):
 		return not_allowed()
 	return render_template("addUsertoProject.html", project_id = project_id)
 
-@app.route("/projects/<int:project_id>/added.html", methods = ['POST'])
+@app.route("/projects/<int:project_id>/added", methods = ['POST'])
 def added(project_id):
 	if request.method == 'POST':
 		if not 'username' in session:
@@ -108,6 +116,32 @@ def added(project_id):
 def presentation(project_id, presentation_id):
 	return "Testing"
 
+@app.route("/projects/<int:project_id>/removeUser")
+def remove_users_from_project(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if not dbc.getRole(project_id, session['username']) == "Project Manager":
+		return not_allowed()
+	printMii = dbc.deletableUserList(project_id)
+	if printMii == []:
+		return "You don't have any users in this project.  Care to add some?"
+	return render_template("removeUserFromProject.html", uList = printMii, project = project_id)
+
+@app.route("/projects/<int:project_id>/removed", methods = ['POST'])
+def removed(project_id):
+	if request.method == 'POST':
+		if not 'username' in session:
+			return render_template("login.html", warning = "Please log-in to the system.")
+		if not dbc.getRole(project_id, session['username']) == "Project Manager":
+			return not_allowed()
+		userToBeRemoved = request.form['username']
+		print userToBeRemoved
+		if dbc.getRole(project_id, userToBeRemoved) == 'Project Manager':
+			return not_allowed()
+		dbc.removeUser(userToBeRemoved, project_id)
+		return "USER REMOVED!"
+	return not_allowed()
+
 @app.route("/projects/<int:project_id>/downloadPrimary")
 def download_current_presentation(project_id):
 	filename = "%s" % project_id
@@ -120,22 +154,6 @@ def createpresentation():
 @app.route("/setprimary.html")
 def setprimary():
 	return testlogin('setprimary.html')
-	
-@app.route("/created.html", methods = ['POST'])
-def createNewPresentation():
-	stuff = Presentation()
-	global latestversion
-	latestversion += 1
-	global latestpresentation
-	latestpresentation += 1
-	stuff.id = latestpresentation
-	stuff.version = latestversion
-	stuff.primary = True
-	presentationList[len(presentationList)-1].primary = False
-	presentationList.insert(len(presentationList), stuff)
-	if request.method == 'POST':
-		return render_template('created.html')
-	return "Done!"
 
 @app.route("/register.html")
 def register():

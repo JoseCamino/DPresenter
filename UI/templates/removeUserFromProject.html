@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+
+<html>
+	<title>Remove User From Project</title>
+	<body>
+		<h3>List of Users to be Removed</h3>
+		<form action = "{{ url_for("removed", project_id = project) }}" method = "post">
+			<fieldset>
+				<select name = "username">
+					{% for user in uList %}
+					<option value = "{{user}}">{{user}}</option>
+					{% endfor %}
+				</select>
+				<br>
+				<input type = "submit" value = "Remove User">
+			</fieldset>
+		</form> 
+	</form>
+	</body>
+</html>

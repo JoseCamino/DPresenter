@@ -3,7 +3,7 @@
 	<head></head>
 	<title>Add Users From a Project</title>
 	<body>
-		<form action = "added.html" method = "post" id = "addUserForm">
+		<form action = "{{url_for ("added", project_id = project_id)}}" method = "post" id = "addUserForm">
 			<legend>Add User</legend>
 			<br>
 			<label for = "username">User Name</label>
@@ -12,7 +12,10 @@
 			<br>
 			<label for = "role"> What role would you like to place him in?</label>
 			<br>
-			<input type = "role" method = "post" name = "role">
+			<select name = "role">
+			<option value = "Presentation Creator">Presentation Creator</option>
+			<option value = "Slide Creator">Slide Creator</option>
+			</select>
 			<br>
 			<input type = "submit" value = "Add User">
 		</form>

@@ -74,6 +74,14 @@ def userInProject(username, project_ID):
 		if(record[0] == username):
 			return True
 	return False
+
+def deletableUserList(project_ID):
+	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s AND role != 'Project Manager';"
+	cur.execute(sqlcommand, [project_ID])
+	userList = []
+	for record in cur:
+		userList.append(record[0])
+	return userList
 	
 def addUser(FName, LName, username, password, repeatpass):
 	sqlcommand = "SELECT username FROM user_list;"
@@ -193,9 +201,9 @@ def addUserToProject(project, user, role):
 	cur.execute(sqlcommand, entry)	
 	conn.commit()
 	
-def removeUser(username):
-	sqlcommand = "DELETE FROM works_on WHERE user_ID = %s;"
-	cur.execute(sqlcommand, [username])
+def removeUser(username, project_ID):
+	sqlcommand = "DELETE FROM works_on WHERE user_ID = %s AND project_id = %s;"
+	cur.execute(sqlcommand, [username, project_ID])
 	conn.commit()
 	
 def addSlide(id, project_ID, version, creation_date, original_ID, previous_ID, approval_required, approval_status, confidentiality, mandatory_status, checkout_ID):
