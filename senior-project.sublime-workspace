@@ -8,10 +8,10 @@
 	"buffers":
 	[
 		{
-			"file": "Parser/testsuite/__init__.py",
+			"file": "Parser/ParserFacade.py",
 			"settings":
 			{
-				"buffer_size": 413,
+				"buffer_size": 1244,
 				"line_ending": "Windows"
 			}
 		},
@@ -19,15 +19,7 @@
 			"file": "Parser/testsuite/unit.py",
 			"settings":
 			{
-				"buffer_size": 4369,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Parser/Image.py",
-			"settings":
-			{
-				"buffer_size": 1433,
+				"buffer_size": 4715,
 				"line_ending": "Windows"
 			}
 		},
@@ -36,6 +28,22 @@
 			"settings":
 			{
 				"buffer_size": 4412,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Parser/PptxFile.py",
+			"settings":
+			{
+				"buffer_size": 33311,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Parser/Image.py",
+			"settings":
+			{
+				"buffer_size": 1445,
 				"line_ending": "Windows"
 			}
 		}
@@ -64,14 +72,19 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Jose/Documents/Projects/Parser/test_split.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Parser.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/__init__.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/fragmenter.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Image.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/unit.py",
+		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/vcs.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/PptxFile.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/ParserFacade.py",
 		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/Parser.py",
-		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Parser.py",
 		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/test_split.py",
 		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/test_merge.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/unit.py",
-		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/vcs.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/helper.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/presentation_tests.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/vcs/testsuite/test_requests/testpresentation.pptx",
@@ -84,7 +97,6 @@
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/presentation_tests.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/testsuite/helper.py",
 		"/C/Users/Jose/Desktop/New Text Document .py",
-		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/Parser/Image.py",
 		"/C/Users/Jose/Desktop/Senior Project/DP/Parser/ParserFacade.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/createtestrepo.py",
 		"/C/Users/Jose/Documents/GitHub/DynamicPresenter/UI/userinterface.py",
@@ -127,6 +139,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Parser",
 			"module",
 			"testsuite",
 			"current_presentation",
@@ -162,24 +175,25 @@
 			[
 				{
 					"buffer": 0,
-					"file": "Parser/testsuite/__init__.py",
+					"file": "Parser/ParserFacade.py",
 					"settings":
 					{
-						"buffer_size": 413,
+						"buffer_size": 1244,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								213,
-								213
+								5,
+								11
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -192,15 +206,15 @@
 					"file": "Parser/testsuite/unit.py",
 					"settings":
 					{
-						"buffer_size": 4369,
+						"buffer_size": 4715,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4368,
-								4368
+								2291,
+								2291
 							]
 						],
 						"settings":
@@ -209,41 +223,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2214.0,
+						"translation.y": 1080.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "Parser/Image.py",
-					"settings":
-					{
-						"buffer_size": 1433,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1281,
-								1281
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 216.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "Parser/Parser.py",
 					"settings":
 					{
@@ -254,8 +240,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								3146,
+								3146
 							]
 						],
 						"settings":
@@ -265,7 +251,63 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2376.0,
+						"translation.y": 1683.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Parser/PptxFile.py",
+					"settings":
+					{
+						"buffer_size": 33311,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7460,
+								7460
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4015.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Parser/Image.py",
+					"settings":
+					{
+						"buffer_size": 1445,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1040,
+								1040
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 498.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -301,7 +343,7 @@
 		"cols":
 		[
 			0.0,
-			0.113183000867,
+			0.0433651344319,
 			1.0
 		],
 		"rows":

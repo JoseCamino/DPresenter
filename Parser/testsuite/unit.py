@@ -2,7 +2,7 @@ import os
 import shutil
 import unittest
 
-from Parser.Parser import Parser
+from Parser.ParserFacade import ParserFacade
 
 def get_tests():
 	return (
@@ -39,7 +39,7 @@ class TestMergeSlides(unittest.TestCase):
 			slides.append(slide)
 			os.remove(bin)
 
-		deck = Parser.mergeSlides(slides)	
+		deck = ParserFacade.mergeSlides(slides)	
 		self.assertTrue(deck[-4:] == 'pptx')
 
 	def test_merge_slides_invalid_input(self):
@@ -48,7 +48,7 @@ class TestMergeSlides(unittest.TestCase):
 		slides = [folder + "/slide1.pptx", folder + "/slide2.pptx"]
 
 		with self.assertRaises(Exception) as ex:
-			Parser.mergeSlides(slides)
+			ParserFacade.mergeSlides(slides)
 	
 
 class TestSplitDeck(unittest.TestCase):
@@ -71,17 +71,17 @@ class TestSplitDeck(unittest.TestCase):
 
 		deck = open(bin,"rb").read()
 		os.remove(bin)
-		slides = Parser.splitDeck(deck)
+		slides = ParserFacade.splitDeck(deck)
 
-		self.assertEqual(len(slides), 3)
+		self.assertEqual(len(slides), 4)
 
 	def test_split_deck_pptx(self):
 		"Test that splitDeck() succeeds splitting a presentation with .pptx format"
 		folder = relative_path("test_files")
 		deck = folder + "/testpresentation.pptx"
-		slides = Parser.splitDeck(deck)
+		slides = ParserFacade.splitDeck(deck)
 
-		self.assertEqual(len(slides), 3)
+		self.assertEqual(len(slides), 4)
 
 	def test_split_deck_invalid_input(self):
 		"Test that splitDeck() does not accept other type of files"
@@ -89,7 +89,7 @@ class TestSplitDeck(unittest.TestCase):
 		deck = folder + "/testpresentation.txt"
 
 		with self.assertRaises(Exception) as ex:
-			Parser.splitDeck(deck)
+			slides = ParserFacade.splitDeck(deck)
 
 
 class TestGenerateImage(unittest.TestCase):
@@ -113,7 +113,7 @@ class TestGenerateImage(unittest.TestCase):
 		"Test that generateImageFromFile() returns images when the input is a pptx file"
 		folder = relative_path("test_files")
 		deck = folder + "/slide1.pptx"
-		image_path = Parser.generateImageFromFile(deck, folder)
+		image_path = ParserFacade.generateImageFromFile(deck, folder)
 
 		if os.path.exists(folder + "/Slide1.JPG"):
 			os.remove(folder + "/Slide1.JPG")
@@ -129,12 +129,20 @@ class TestGenerateImage(unittest.TestCase):
 
 		deck = open(bin,"rb").read()
 		os.remove(bin)
-		image_path = Parser.generateImageFromData(deck, folder)
+		image_path = ParserFacade.generateImageFromData(deck, folder)
 
 		if os.path.exists(folder + "/Slide1.JPG"):
 			os.remove(folder + "/Slide1.JPG")
 
 		self.assertEqual(image_path[0][-3:], "JPG")
+
+	def test_invalid_path(self):
+		"Test that an invalid input path causes an exception"
+		folder = relative_path("test_files")
+		deck = folder + "/invalid_slide.pptx"
+		
+		with self.assertRaises(Exception) as ex:
+			image_path = ParserFacade.generateImageFromFile(deck, folder)
 
 
 class TestGenerateSlide(unittest.TestCase):
@@ -150,5 +158,5 @@ class TestGenerateSlide(unittest.TestCase):
 
 	def test_generate_new_slide(self):
 		"Test that generateNewSlide() works"
-		slide = Parser.generateNewSlide()
+		slide = ParserFacade.generateNewSlide()
 		self.assertTrue(slide != None)

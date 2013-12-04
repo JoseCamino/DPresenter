@@ -44,13 +44,13 @@ class Image:
 
       return self.__location
 
-
+   """
    def resize(self, width, height):
       'Resizes the image to the given size'
       resized_image = []
 
       return resized_image
-
+   """
 
    def getLocation(self):
    	'Returns the location of the image file'
