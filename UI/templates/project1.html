@@ -12,6 +12,7 @@
 		<br>
 		<h2>List of Users in {{ name }}</h2>
 		</br>
+		<h3>{{ warning }}</h3>
 		<table>
 			<tbody>
 				<tr>
@@ -32,7 +33,7 @@
 		</table>
 	<a href="{{ url_for("add_user_to_project", project_id = project) }}">Add Users from Project</a>
 	<br>
-	<a href="/assignslide.html">Authorize Users for Checking Out Slides</a>
+	<a href="{{ url_for("checkOut", project_id = project)}}">Authorize Users for Checking Out Slides</a>
 	<br>
 	<a href="/index.html">Back to Projects Page</a>
 	<br>

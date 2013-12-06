@@ -45,3 +45,4 @@ venv
 testprojects/*
 Parser/Files/Temp/*
 projects/*
+*.sublime-workspace

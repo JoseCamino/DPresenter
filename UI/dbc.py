@@ -82,6 +82,14 @@ def deletableUserList(project_ID):
 	for record in cur:
 		userList.append(record[0])
 	return userList
+
+def slideCreatorList(project_ID):
+	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s AND role = 'Slide Creator';"
+	cur.execute(sqlcommand, [project_ID])
+	userList = []
+	for record in cur:
+		userList.append(record[0])
+	return userList
 	
 def addUser(FName, LName, username, password, repeatpass):
 	sqlcommand = "SELECT username FROM user_list;"
@@ -130,6 +138,14 @@ def getUserList(project_ID):
 		for record in cur:
 			name = "%s %s" % (record[0], record[1])
 			user.user_ID = name
+	return userList
+
+def getUserNameList(project_ID):
+	sqlcommand = "SELECT user_ID from WORKS_ON WHERE project_ID = %s;"
+	cur.execute(sqlcommand, [project_ID])
+	userList = []
+	for record in cur:
+		userList.append(record[0])
 	return userList
 
 def getRole(project_ID, username):

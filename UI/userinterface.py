@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, send_from_directory
+from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for
 import os
 from werkzeug import secure_filename
 import dbc
@@ -75,13 +75,14 @@ def show_project(project_id):
 	project = VCS().load_project(str(project_id)) # todo: catch exception
 	if dbc.getRole(project_id, session['username']) == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
-		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id))
-	if dbc.getRole(project_id, session['username']) == 'Slide Creator':
+		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "")
+	if dbc.getRole(project_id, session['username']) == 'Presentation Creator':
 		printMii = project.presentations
 		return render_template('project3.html', presentationList = printMii, project = project_id, name = dbc.getProjectName(project_id))
-	if dbc.getRole(project_id, session['username']) == 'Presentation Creator':
-		return render_template('project2.html')
-	return "You are viewing project with id %s" % project_id
+	if dbc.getRole(project_id, session['username']) == 'Slide Creator':
+		printMii = project.current_presentation.slides
+		return render_template('project2.html', slideList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "")
+	return "You are viewing project with id %s, oh and something went wrong." % project_id
 
 @app.route("/projects/<int:project_id>/addUserstoProject")
 def add_user_to_project(project_id):
@@ -95,7 +96,7 @@ def add_user_to_project(project_id):
 def added(project_id):
 	if request.method == 'POST':
 		if not 'username' in session:
-			return render_template("login.html", warning = "PLease log-in to the system.")
+			return render_template("login.html", warning = "Please log-in to the system.")
 		if not dbc.getRole(project_id, session['username']) == "Project Manager":
 			return not_allowed()
 		uname_to_add = request.form['username']
@@ -110,11 +111,52 @@ def added(project_id):
 			return "Invalid role selection.  Please assign as either a Presentation Creator or Slide Creator."
 		dbc.addUserToProject(project_id, uname_to_add, role_to_add)
 		return "Success!"
-	return "This should never happen"
+	return not_allowed()
+
+@app.route("/projects/<int:project_id>/addSlide")
+def addSlide(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	currentPresentation = VCS().load_project(str(project_id)).current_presentation
+	currentPresentation.add_slide()
+	slides = currentPresentation.slides
+	return render_template("project2.html", slideList = slides, project = project_id, name = dbc.getProjectName(project_id), warning = "New Slide added to Current Presentation.")
+
+@app.route("/projects/<int:project_id>/createPresentation")
+def createPresentation(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != "Presentation Creator":
+		return not_allowed()
+	project = VCS().load_project(str(project_id))
+	return "This hasn't been implemented yet."
 
 @app.route("/projects/<int:project_id>/presentations/<int:presentation_id>")
 def presentation(project_id, presentation_id):
 	return "Testing"
+
+@app.route("/projects/<int:project_id>/authorizeCheckOut")
+def checkOut(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please Log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != 'Project Manager':
+		return not_allowed()
+	currentPresentation = VCS().load_project(str(project_id)).current_presentation
+	userList = dbc.getUserNameList(project_id)
+	if userList == []:
+		printMii = dbc.getUserList(project_id)
+		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You need to add slide creators first to this project for checkout.")
+	slideList = currentPresentation.slides
+	if slideList == []:
+		printMii = dbc.getUserList(project_id)
+		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You don't have any slides for slide creators to check out.")
+	return render_template("authorizeForCheckOut.html", slides = slideList, users = userList, project_id = project_id)
+
+@app.route("/projects/<int:project_id>/checkedOut", methods = ['POST'])
+def checkedOut(project_id):
+	if request.method == 'POST':
+		return "Testing."
+	return not_allowed()
 
 @app.route("/projects/<int:project_id>/removeUser")
 def remove_users_from_project(project_id):
@@ -141,6 +183,16 @@ def removed(project_id):
 		dbc.removeUser(userToBeRemoved, project_id)
 		return "USER REMOVED!"
 	return not_allowed()
+
+@app.route("/projects/<int:project_id>/checkInSlide")
+def checkInSlide(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != "Slide Creator":
+		return not_allowed()
+	slides = VCS().load_project(str(project_id)).current_presentation.slides
+	printMii = dbc.getUserNameList(project_id)
+	return render_template("checkIn.html", project_id = project_id, slideList = slides, userList = printMii)
 
 @app.route("/projects/<int:project_id>/downloadPrimary")
 def download_current_presentation(project_id):

@@ -10,12 +10,12 @@
 			</tr>
 		{% for presentation in presentationList %}
 		<tr>
-			<td><a href = "{{ url_for("presentation", project_id=project, presentation_id = presentation.id) }}">{{presentation.name}}</a></td>
+			<td><a href = "{{ url_for("presentation", project_id = project, presentation_id = presentation.id) }}">{{presentation.name}}</a></td>
 		</tr>
 		{% endfor %}
 		</table>
 		<br>
-		<a href = "createPresentation.html">Create a Presentation</a>
+		<a href = "{{ url_for("createPresentation", project_id = project)}}">Create a Presentation</a>
 		<br>
 		<a href = "{{ url_for("index")}}">Return to index</a>
 		<br>
