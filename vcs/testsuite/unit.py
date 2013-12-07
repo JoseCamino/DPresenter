@@ -188,3 +188,9 @@ class TestCheckinCheckout(unittest.TestCase):
 	def test_checkin_fails_before_checkout(self):
 		with self.assertRaises(Exception):
 			self.slide.checkin("testuser", "TEST DATA")
+
+	def test_checkout_user(self):
+		self.assertIsNone(self.slide.checkout_user)
+		self.slide.checkout("testuser")
+		self.assertEqual(self.slide.checkout_user, "testuser")
+		

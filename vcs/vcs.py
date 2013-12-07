@@ -154,6 +154,11 @@ class Slide(object):
 		until this is accessed.
 		"""
 		return self.project._repo.load_slide_data(self.id)
+
+	@property
+	def checkout_user(self):
+		"Returns the user id of the user who checked out this slide, or null if it isn't checked out"
+		return self.project._repo.get_checkout_user(self.id)
 	
 	def checkout(self, user_id):
 		"Checks out a slide, preventing checkout by other users"
@@ -412,6 +417,22 @@ class FileRepository(object):
 				""", [pid, slide_id])
 
 			return slide_id
+
+	def get_checkout_user(self, slide_id):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				SELECT user_id
+				FROM slide_checkout
+				WHERE slide_id = ?
+				""", [slide_id])
+
+			row = c.fetchone()
+			if not row:
+				return None
+
+			return row[0]
 
 	def checkout_slide(self, slide_id, user_id):
 		with self.connect_to_db() as conn:
