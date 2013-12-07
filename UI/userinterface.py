@@ -191,10 +191,11 @@ def checkedOut(project_id):
 	if dbc.getRole(project_id, session['username']) != 'Project Manager':
 		return not_allowed("error")
 	if request.method == 'POST':
-		currentPresentation = VCS().load_project(str(project_id)).current_presentation
+		project = VCS().load_project(str(project_id))
 		user = request.form['username']
 		slide = request.form['slide_ID']
-		currentPresentation.checkout(slide, user)
+		print slide
+		project.get_slide(slide).checkout(user)
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "Slide has been checked out")
 	return illegal_action("error")
@@ -226,15 +227,15 @@ def removed(project_id):
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "%s has been removed from the project." % userToBeRemoved)
 	return illegal_action("error")
 
-@app.route("/projects/<int:project_id>/checkInSlide")
-def checkInSlide(project_id):
+@app.route("/projects/<int:project_id>/slide/<int:slide_id>/checkIn")
+def checkInSlide(project_id, slide_id):
 	if not 'username' in session:
 		return render_template("login.html", warning = "Please log-in to the system.")
-	if dbc.getRole(project_id, session['username']) != "Slide Creator":
+	if dbc.getRole(project_id, session['username']) != "Slide Creator" and dbc.getRole(project_id, session['username']) != "Project Manager" and dbc.getRole(project_id, session['username']) != "Presentation Creator":
 		return not_allowed("error")
-	slides = VCS().load_project(str(project_id)).current_presentation.slides
+	slides = VCS().load_project(str(project_id)).get_slide(slide_id)
 	printMii = dbc.getUserNameList(project_id)
-	return render_template("checkIn.html", project_id = project_id, slideList = slides, userList = printMii)
+	return render_template("checkIn.html", project_id = project_id, slide_id = slides)
 
 @app.route("/projects/<int:project_id>/downloadPrimary")
 def downloadCurrentPresentation(project_id):

@@ -36,7 +36,7 @@
 				<label for = "username">User Name</label>
 				<select name = "username">
 					{% for user in users %}
-					<option name = "{{ user }}">{{ user }}</option>
+					<option value = "{{ user }}">{{ user }}</option>
 					{% endfor %}
 				</select>
 			</div>
@@ -44,7 +44,7 @@
 				<label for = "slide_ID">Slide</label>
 				<select name = "slide_ID">
 					{% for slide in slides %}
-					<option name = "{{ slide.id}}">{{ loop.index }}. {{slide.name}}</option>
+					<option value = "{{ slide.id}}">{{ loop.index }}. {{slide.name}}</option>
 					{% endfor %}
 				</select>
 			</div>
