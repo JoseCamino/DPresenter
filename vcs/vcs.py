@@ -89,7 +89,7 @@ class CurrentPresentation(Presentation):
 		return self._repo.persist_presentation(self, new_name)
 
 	def add_slide(self, name="Untitled", data=None):
-		"Adds a new slide to the end of the project"
+		"Adds a new slide to the end of the project and returns the newly created slide object"
 		return self._repo.add_slide(self.id, name, data)
 
 class PersistedPresentation(Presentation):
@@ -169,7 +169,7 @@ class Slide(object):
 		Checks in a slide, and returns the newly created slide's id.
 		Fails if the slide hasn't already been checked out by "user_id"
 		"""
-		return self.project._repo.checkin_slide(self.id, user_id, newData)
+		return self.project.get_slide(self.project._repo.checkin_slide(self.id, user_id, newData))
 
 	def save_preview(self, image_path):
 		# todo: implement this
@@ -388,7 +388,7 @@ class FileRepository(object):
 		return self.load_data("slidedata/%d" % slide_id)
 
 	def add_slide(self, pid, slide_name, data):
-		"Adds an empty slide to the presentation."
+		"Adds an empty slide to the presentation and returns the id"
 		# TODO: perhaps just get the current presentation id instead of getting it as a parameter?
 
 		# TODO: Make this information change depending by project type
@@ -416,7 +416,7 @@ class FileRepository(object):
 				VALUES (?, ?)
 				""", [pid, slide_id])
 
-			return slide_id
+			return Slide(self.project, slide_id, slide_name, None)
 
 	def get_checkout_user(self, slide_id):
 		with self.connect_to_db() as conn:
