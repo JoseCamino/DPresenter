@@ -92,17 +92,6 @@ class CurrentPresentation(Presentation):
 		"Adds a new slide to the end of the project"
 		return self._repo.add_slide(self.id, name, data)
 
-	def checkout(self, slide_id, user_id):
-		"Checks out a slide, preventing checkout by other users"
-		self._repo.checkout_slide(slide_id, user_id)
-
-	def checkin(self, slide_id, user_id, newData):
-		"""
-		Checks in a slide, and returns the newly created slide's id.
-		Fails if the slide hasn't already been checked out by "user_id"
-		"""
-		return self._repo.checkin_slide(slide_id, user_id, newData)
-
 class PersistedPresentation(Presentation):
 	def __init__(self, *args, **kwargs):
 		super(PersistedPresentation, self).__init__(*args, **kwargs)
@@ -165,6 +154,17 @@ class Slide(object):
 		until this is accessed.
 		"""
 		return self.project._repo.load_slide_data(self.id)
+	
+	def checkout(self, user_id):
+		"Checks out a slide, preventing checkout by other users"
+		self.project._repo.checkout_slide(self.id, user_id)
+
+	def checkin(self, user_id, newData):
+		"""
+		Checks in a slide, and returns the newly created slide's id.
+		Fails if the slide hasn't already been checked out by "user_id"
+		"""
+		return self.project._repo.checkin_slide(self.id, user_id, newData)
 
 	def save_preview(self, image_path):
 		# todo: implement this
