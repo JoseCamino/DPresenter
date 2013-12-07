@@ -112,8 +112,9 @@ class Parser:
 
 
    @staticmethod
-   def generateImageFromData(data, output_dir):
-      'Generates an image file from each slide. Input is the binary data of the slide or deck. Returns the paths to the images.'
+   def generateImageFromData(data, image_names):
+      'Generates an image file from each slide. Input is the binary data of the slide or deck'
+      'and a list of names. Renames the images and returns a list of paths.'
 
       temp_folder = relative_path("Files/Temp")
       bin = temp_folder + "/File.bin"
@@ -132,13 +133,22 @@ class Parser:
       image = Image()
 
       pptx_dir = os.path.abspath(pptx)
-      output_folder = os.path.abspath(output_dir)
       
-      image_paths = image.generateFromPpt(pptx_dir, output_folder, no_of_slides)
+      temp_paths = image.generateFromPpt(pptx_dir, temp_folder, no_of_slides)
+
+      n = len(temp_paths)
+
+      if (len(image_names) != n):
+         for i in xrange (0, n):
+            os.remove(temp_paths[i])
+         raise Exception ("Amount of generated slides differs from input parameter") 
+
+      for i in xrange (0, n):
+         shutil.move(temp_paths[i], image_names[i])
 
       os.remove(pptx)
 
-      return image_paths
+      return image_names
 
 
    @staticmethod

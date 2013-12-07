@@ -21,10 +21,10 @@ class ParserFacade:
       return Parser.generateImageFromFile(file_path, output_dir)
 
    @staticmethod
-   def generateImageFromData(data, output_dir):
-      'Generates an image file from each slide. Input is the binary data of the slide or deck.'
-      'Returns the paths to the images as [.../Slide1.JPG, .../Slide2.JPG, ...].'
-      return Parser.generateImageFromData(data, output_dir)
+   def generateImageFromData(data, image_paths):
+      'Generates an image file from each slide. Input is the binary data of the slide or deck'
+      'and the list of paths of the images to be generated.'
+      return Parser.generateImageFromData(data, image_paths)
 
    @staticmethod
    def generateNewSlide():

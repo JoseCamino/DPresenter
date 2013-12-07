@@ -129,10 +129,10 @@ class TestGenerateImage(unittest.TestCase):
 
 		deck = open(bin,"rb").read()
 		os.remove(bin)
-		image_path = ParserFacade.generateImageFromData(deck, folder)
+		image_names = [folder+'/0001.JPG']
+		image_path = ParserFacade.generateImageFromData(deck, image_names)
 
-		if os.path.exists(folder + "/Slide1.JPG"):
-			os.remove(folder + "/Slide1.JPG")
+		os.remove(image_names[0])
 
 		self.assertEqual(image_path[0][-3:], "JPG")
 
