@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Persist the Current Presentation</title>
+	</head>
+	<body>
+		<h1>Persit the Current Presentation</h1>
+		<form action = "{{url_for ("createPresentation", project_id = project_id)}}" method = "post" id = "persistPresentationForm">
+			<legend>What would you like to name the presentation?</legend>
+			<fieldset>
+			<br>
+			<input type = "presentation_name" method = "post" id = "presentation_name" required>
+			<br>
+			<input type = "submit" id = "Persist Presentation">
+			</fieldset>
+		</form>
+	</body>
+</html>
