@@ -66,7 +66,17 @@ class Parser:
          deck = pptx
 
       slides_list = []
-      deck = PptxFile(deck)
+
+      try:
+         deck = PptxFile(deck)
+      except:
+         "Delete invalid file"
+         os.remove(deck)
+         folder = deck.replace('.pptx', '')
+         if (os.path.exists(folder)):
+            shutil.rmtree(folder)
+         raise Exception ("Invalid presentation data")
+
       lenght = len(deck.getSlides())
 
       for i in xrange(1, lenght):
@@ -141,7 +151,7 @@ class Parser:
       if (len(image_names) != n):
          for i in xrange (0, n):
             os.remove(temp_paths[i])
-         raise Exception ("Amount of generated slides differs from input parameter") 
+         raise Exception ("Amount of generated slides differs from lenght of input parameter") 
 
       for i in xrange (0, n):
          shutil.move(temp_paths[i], image_names[i])

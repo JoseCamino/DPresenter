@@ -86,7 +86,10 @@ class TestSplitDeck(unittest.TestCase):
 	def test_split_deck_invalid_input(self):
 		"Test that splitDeck() does not accept other type of files"
 		folder = relative_path("test_files")
-		deck = folder + "/testpresentation.txt"
+		invalid_file = folder + "/invalidfile.pptx"
+		deck = folder + 'temp_inv_deck.pptx'
+
+		shutil.copy(invalid_file, deck)
 
 		with self.assertRaises(Exception) as ex:
 			slides = ParserFacade.splitDeck(deck)
