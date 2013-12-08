@@ -4,11 +4,20 @@
 		<title>Check-in Slide</title>
 	</head>
 	<body>
-		<form action = "url_for("checkedIn", project_id = project_id, slide_id = slide_id)}}" method = "post" enctype = "multipart/form-data">
-			<legend>Check-in Slide</legend>
+		<form action = "{{ url_for("checkedIn", project_id = project_id) }}" method = "post" enctype = "multipart/form-data">
+			<legend><h3>Check-in Slide</h3></legend>
+			<br>
+			<br>
 			<label for = "slide">Slide to Check Out</label>
 			<br>
+			<select name = "slide_id">
+				{% for slide in slideList %}
+				<option value = "{{slide.id}}">{{loop.index}}. {{slide.name}}</option>
+				{% endfor %}
+			</select>
+			<br>
 			<input type = "file" name = "slide_file" id = "slide_file">
+			<br>
 			<br>
 			<input type = "submit" id = "Check-In Slide">
 		</form>

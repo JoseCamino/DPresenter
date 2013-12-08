@@ -51,5 +51,16 @@
 			<input type = "submit" value = "Check Out">
 		</fieldset>
 	</form>
+
+		<table>
+			<td><b>Slide ID</b></td>
+			<td><b>Checked Out By</td>
+			{% for slide in slides %}
+			<tr>
+			<td>{{slide.id}}</td><td>{{slide.checkout_user}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
 </body>
 </html>
