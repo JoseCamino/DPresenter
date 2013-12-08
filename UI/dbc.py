@@ -1,5 +1,6 @@
 import psycopg2
 import sys
+from werkzeug.security import generate_password_hash, check_password_hash
 
 conn = psycopg2.connect("dbname=dynamic user=postgres password = lol")
 cur = conn.cursor()
@@ -55,9 +56,7 @@ def checkPassword(username, password):
 	sqlcommand = "SELECT password FROM user_list where username = %s;"
 	cur.execute(sqlcommand, [username])
 	for record in cur:
-		if(record[0] == password):
-			return True
-	return False
+		return check_password_hash(record[0], password)
 
 def userExists(username):
 	sqlcommand = "SELECT username From user_list where username = %s;"
@@ -77,14 +76,6 @@ def userInProject(username, project_ID):
 
 def deletableUserList(project_ID):
 	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s AND role != 'Project Manager';"
-	cur.execute(sqlcommand, [project_ID])
-	userList = []
-	for record in cur:
-		userList.append(record[0])
-	return userList
-
-def slideCreatorList(project_ID):
-	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s AND role = 'Slide Creator';"
 	cur.execute(sqlcommand, [project_ID])
 	userList = []
 	for record in cur:
@@ -110,8 +101,9 @@ def addUser(FName, LName, username, password, repeatpass):
 		if(not validCharacter(substring)):
 			result = "Your password has an invalid character in the string.  Please input a new password!"
 			return result
+	saltedPW = generate_password_hash(password)
 	sqlcommand = "INSERT INTO user_list VALUES(%s, %s, %s, %s);"
-	cur.execute(sqlcommand, [FName, LName, username, password])
+	cur.execute(sqlcommand, [FName, LName, username, saltedPW])
 	conn.commit()
 	result = "You are now registered into the Dynamic Presenter system!"
 	return result
@@ -172,44 +164,18 @@ def getProjectList(username):
 			projectList[x].project_name = record[0]
 	return projectList
 
-def getPrimaryPresentation(project_ID):
-	sqlcommand = "SELECT ID, version from presentation WHERE project_ID = %s AND primary_status = true"
-	cur.execute(sqlcommand, [project_ID])
-	result = []
-	for record in cur:
-		result.append(record[0])
-		result.append(record[1])
-	return result
+def setProjectStatus(project_id, status):
+	sqlcommand = "UPDATE project_list SET frozen = %s WHERE id = %s;"
+	cur.execute(sqlcommand, [status, project_id])
+	conn.commit()
 
-def getPresentationList(project_ID):
-	sqlcommand = "SELECT ID, version, primary_status FROM presentation WHERE project_ID = %s;"
-	cur.execute(sqlcommand, [project_ID])
-	presentationList = []
+def getProjectStatus(project_id):
+	sqlcommand = "SELECT frozen FROM project_list where id = %s;"
+	cur.execute(sqlcommand, [project_id])
+	value = []
 	for record in cur:
-		temppresentation = presentation()
-		temppresentation.construct(record[0], record[1], record[2])
-		presentationList.append(temppresentation)
-	return presentationList
-
-def getSlideList(presentation):
-	sqlcommand = "SELECT slide_ID, page_number FROM presentation_contains where presentation_ID = %s;"
-	cur.execute(sqlcommand, [presentation])
-	slideList = []
-	for record in cur:
-		tempslide = slideInPresentation()
-		tempslide.construct(record[0], record[1])
-		slideList.append(tempslide)
-	return slideList
-
-def getSlideListProject(project):
-	sqlcommand = "SELECT id, version FROM slide_list WHERE project_ID = %s;"
-	cur.exeucte(sqlcommand, [project])
-	slideList = []
-	for record in cur:
-		tempslide = slideInProject()
-		tempslide.construct(record[0], record[1])
-		slideList.append(tempSlide)
-	return slideList
+		value.append(record[0])
+	return value
 
 def addUserToProject(project, user, role):
 	sqlcommand = "INSERT INTO works_on VALUES(%s, %s, %s);"
@@ -220,30 +186,6 @@ def addUserToProject(project, user, role):
 def removeUser(username, project_ID):
 	sqlcommand = "DELETE FROM works_on WHERE user_ID = %s AND project_id = %s;"
 	cur.execute(sqlcommand, [username, project_ID])
-	conn.commit()
-	
-def addSlide(id, project_ID, version, creation_date, original_ID, previous_ID, approval_required, approval_status, confidentiality, mandatory_status, checkout_ID):
-	sqlcommand = "INSERT INTO slide_list VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-	entry = [id, project_ID, version, creation_date, original_ID, previous_ID, approval_required, approval_status, confidentiality, mandatory_status, checkout_ID]
-	cur.execute(sqlcommand, entry)
-	conn.commit()
-	
-def addPresentation(id, project_ID, version, primary_status):
-	sqlcommand = "INSERT INTO presentation VALUES(%s, %s, %s)"
-	entry = [id, project_ID, version, primary_status]
-	cur.execute(sqlcommand, entry)
-	conn.commit()
-
-def addPresentationContains(presentation_ID, slide_ID, page_number):
-	sqlcommand = "INSERT INTO presentation_contains VALUES(%s, %s, %s);"
-	entry = [presentation_ID, slide_ID, page_number]
-	cur.execute(sqlcommand, entry)
-	conn.commit()
-	
-def addOptOut(slide_ID, user_ID, opt_out_status):
-	sqlcommand = "INSERT INTO opt_out_list VALUES(%s, %s, %s);"
-	entry = [slide_ID, user_ID, opt_out_status]
-	cur.execute(sqlcommand, entry)
 	conn.commit()
 
 def addProject(user_ID, project_name):
@@ -267,24 +209,34 @@ def addProject(user_ID, project_name):
 	for record in cur:
 		id_of_proj = record[0]
 	return id_of_proj
-	
-def optOut(slide_ID, user_ID):
-	sqlcommand = "SELECT * FROM opt_out_list WHERE slide_ID = %s AND user_ID = %s);"
-	cur.execute(sqlcommand, [slide_ID, user_ID])
-	for record in cur:
-		if(record[2] == 'Optional'):
-			sqlcommand = "UPDATE TABLE opt_out_list SET opt_out_status = true WHERE (slide_ID = %s) AND (user_ID = %s);"
-			cur.execute(sqlcommand, [slide_ID, user_ID])
-			conn.commit()
-			
-def updatePrimary(presentation_ID, project_ID):
-	sqlcommand = "UPDATE TABLE presentation SET primary_status = false WHERE (project_ID = %s) AND (primary_status = true);"
-	cur.execute(sqlcommand, [project_ID])
+
+# ONLY RUN THIS IF YOU ARE MAKING A NEW DATABASE FROM SCRATCH!  THIS IS HERE FOR INITIALIZATION AND TESTING PURPOSES!		
+def initializeDatabase():
+	sqlcommand = "CREATE TABLE user_list(FName text, LName text, username text PRIMARY KEY, password text);"
+	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand = "UPDATE TABLE presentation SET primary_status = true WHERE (presentation_ID = %s);"
-	cur.execute(sqlcommand, [presentation_ID])
+	sqlcommand = "CREATE TABLE project_list(ID serial PRIMARY KEY, project_name text, frozen boolean);"
+	cur.execute(sqlcommand)
 	conn.commit()
-		
+	sqlcommand = "CREATE TABLE works_on(project_ID integer, user_id text, FOREIGN KEY (project_ID) references project_list(ID), FOREIGN KEY (user_ID) references user_list(username), role text);"
+	cur.execute(sqlcommand)
+	conn.commit()
+	sqlcommand = "INSERT INTO project_list VALUES(0, 'Do Not Delete Mii', true);"
+	cur.execute(sqlcommand)
+	conn.commit()
+
+# ONLY RUN THIS IF YOU ARE PLANNING TO RUN TESTS ON THE DATABASE!  DO NOT RUN THIS METHOD OTHERWISE!
+def wipeDatabase():
+	sqlcommand = "DROP TABLE works_on;"
+	cur.execute(sqlcommand)
+	conn.commit()
+	sqlcommand = "DROP TABLE project_list;"
+	cur.execute(sqlcommand)
+	conn.commit()
+	sqlcommand = "Drop TABLE user_list;"
+	cur.execute(sqlcommand)
+	conn.commit()
+
 def disconnect():
         conn.close()
         cur.close()

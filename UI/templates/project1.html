@@ -16,8 +16,8 @@
 		<table>
 			<tbody>
 				<tr>
-				<td><h4>User</h4></td>
-				<td><h4>Role</h4></td>
+				<td><b>User</b></td>
+				<td><b>Role</b></td>
 				</tr>				
 				{% for userRole in userList %}
 				<tr>
@@ -31,15 +31,24 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		<br>
 	<a href="{{ url_for("add_user_to_project", project_id = project) }}">Add Users from Project</a>
-	<br>
-	<a href="{{ url_for("checkOut", project_id = project)}}">Authorize Users for Checking Out Slides</a>
 	<br>
 	<a href= "{{ url_for("remove_users_from_project", project_id = project) }}"> Remove Users From Project</a>
 	<br>
-	<a href = "{{ url_for("viewPresentations", project_id = project)}}">View List of Presentations</a>
 	<br>
-	<a href= "{{ url_for("downloadCurrentPresentation", project_id = project) }}"> Download Current Presentation</a>
+	<a href="{{ url_for("checkOut", project_id = project)}}">Authorize Users for Checking Out Slides</a>
+	<br>
+	<a href = "{{ url_for("revokeCheckOut", project_id = project)}}">Cancel a Check Out on a Slide</a>
+	<br>
+	<br>
+	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
+	<br>
+	<a href= "{{ url_for("downloadCurrentPresentation", project_id = project) }}">Download Current Presentation</a>
+	<br>
+	<br>
+	<a href = "{{ url_for("changeProjectStatus", project_id = project) }}">Freeze/Release Project</a>
+	<br>
 	<br>
 	<a href="/index.html">Back to Projects Page</a>
 	<br>

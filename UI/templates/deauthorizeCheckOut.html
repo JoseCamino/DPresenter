@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Deauthorize a User for Check-Out</title>
+	</head>
+	<body>
+		<form action = "{{ url_for("deauthorized", project_id = project_id)}}" method = "post">
+			<legend>Select Slide to deauthorize</legend>
+			<select name = "slide_ID">
+					{% for slide in slides %}
+					<option value = "{{slide.id}}">{{loop.index}}. {{slide.name}}</option>
+					{% endfor %}
+			</select>
+			<input type = "submit" value = "Deauthorize CheckOut">
+		</form>
+		<br>
+		<table>
+			<td><b>Slide ID</b></td>
+			<td><b>Checked Out By</td>
+			{% for slide in slides %}
+			<tr>
+			<td>{{slide.id}}</td><td>{{slide.checkout_user}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</body>
+</html>
