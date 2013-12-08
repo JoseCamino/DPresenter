@@ -171,6 +171,12 @@ class Slide(object):
 		"""
 		return self.project.get_slide(self.project._repo.checkin_slide(self.id, user_id, newData))
 
+	def cancel_checkout(self):
+		"""
+		If this slide has been checked out, it will no longer be checked out. Otherwise nothing happens.
+		"""
+		self.project._repo.cancel_checkout(self.id)
+
 	def save_preview(self, image_path):
 		# todo: implement this
 		pass
@@ -505,3 +511,12 @@ class FileRepository(object):
 				""", [slide_id])
 
 			return new_slide_id
+
+	def cancel_checkout(self, slide_id):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				DELETE FROM slide_checkout
+				WHERE slide_id = ?
+				""", [slide_id])

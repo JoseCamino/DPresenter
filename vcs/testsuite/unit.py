@@ -195,3 +195,10 @@ class TestCheckinCheckout(unittest.TestCase):
 		self.assertIsNone(self.slide.checkout_user)
 		self.slide.checkout("testuser")
 		self.assertEqual(self.slide.checkout_user, "testuser")
+
+	def test_cancel_checkout(self):
+		self.slide.checkout("testuser")
+		self.assertIsNotNone(self.slide.checkout_user)
+		self.slide.cancel_checkout()
+		self.assertIsNone(self.slide.checkout_user)
+		
