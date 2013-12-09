@@ -184,7 +184,7 @@ def addProject(user_ID, project_name):
 	sqlcommand = "INSERT INTO project_list VALUES((SELECT MAX(id) from project_list) + 1, %s, false);"
 	cur.execute(sqlcommand, [project_name])
 	conn.commit()
-	sqlcommand = "INSERT INTO works_on VALUES((SELECT MAX(id) from project_list), %s, 'Project Manager', false);"
+	sqlcommand = "INSERT INTO works_on VALUES((SELECT MAX(id) from project_list), %s, 'Project Manager');"
 	cur.execute(sqlcommand, [user_ID])
 	conn.commit()
 	sqlcommand = "SELECT MAX(id) from project_list;"

@@ -1,7 +1,7 @@
 import os
 import os.path
 import unittest
-import dbc
+import UI.dbc
 
 import unit
 from helper import remove_dir_if_exists
