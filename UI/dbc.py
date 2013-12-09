@@ -22,22 +22,6 @@ class project(object):
 		self.role = job
 		self.project_name = None
 
-class presentation(object):
-	def construct(self, pres_id, vers, primary):
-		self.presentation_ID = pres_id
-		self.version = vers
-		self.is_primary = primary
-
-class slideInPresentation(object):
-	def construct(self, sli_ID, page_num):
-		self.slide_ID = sli_ID
-		self.page_number = page_num
-
-class slideInProject(object):
-	def construct(self, sli_ID, vers):
-		self.slide_ID = sli_ID
-		self.version = vers
-
 def giveMetheSecretKey():
 	return secretkey
 	
@@ -197,10 +181,10 @@ def addProject(user_ID, project_name):
 		substring = project_name[x:x+1]
 		if not validCharacter(substring):
 			return "Your Project Name has invalid characters.  Please don't anything other than numbers or characters."
-	sqlcommand = "INSERT INTO project_list VALUES((SELECT MAX(id) from project_list) + 1, %s);"
+	sqlcommand = "INSERT INTO project_list VALUES((SELECT MAX(id) from project_list) + 1, %s, false);"
 	cur.execute(sqlcommand, [project_name])
 	conn.commit()
-	sqlcommand = "INSERT INTO works_on VALUES((SELECT MAX(id) from project_list), %s, 'Project Manager');"
+	sqlcommand = "INSERT INTO works_on VALUES((SELECT MAX(id) from project_list), %s, 'Project Manager', false);"
 	cur.execute(sqlcommand, [user_ID])
 	conn.commit()
 	sqlcommand = "SELECT MAX(id) from project_list;"
@@ -236,6 +220,16 @@ def wipeDatabase():
 	sqlcommand = "Drop TABLE user_list;"
 	cur.execute(sqlcommand)
 	conn.commit()
+
+#TEST FUNCTION ONLY! NOT USED!
+def projectExists(project_id):
+	sqlcommand = "SELECT id FROM project_list where id = %s;"
+	cur.execute(sqlcommand, [project_id])
+	inputvalue = []
+	for record in cur:
+		if record[0] == project_id:
+			return True
+	return False
 
 def disconnect():
         conn.close()
