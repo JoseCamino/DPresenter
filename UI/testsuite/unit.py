@@ -3,7 +3,7 @@ import os.path
 import unittest
 
 import dbc
-from helper import remove_test_result, get_vcs
+from helper import remove_test_repo
 
 conn = psycopg2.connect("dbname=testdynamic user=postgres password = lol")
 cur = conn.cursor()
@@ -15,12 +15,12 @@ class TestAddUser(unittest.TestCase):
 	def setUp(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
-		remove_test_result()
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
-		remove_test_result()
+		remove_test_repo()
 
 	def test_add_user_fail_if_pw_too_short(self):
 		result = dbc.addUser("Jimmy", "Tester", "test1", "test", "test")
@@ -48,7 +48,7 @@ class TestValidCharacters(unittest.TestCase):
 		result = dbc.ValidCharacter("a")
 		self.assertTrue(result)
 
-	def test_valid_character_fail_if_invalud(self):
+	def test_valid_character_fail_if_invalid(self):
 		result = dbc.ValidCharacter("^")
 		self.assertFalse(result)
 		
@@ -57,10 +57,12 @@ class TestCheckPassword(unittest.TestCase):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def check_password_pass_if_true(self):
 		result = dbc.checkPassword("test1", "testthis")
@@ -75,10 +77,12 @@ class TestUserExists(unittest.TestCase):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def user_exists_pass_if_true(self):
 		result = dbc.userExists("test1")
@@ -95,10 +99,12 @@ class TestUserInProject(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def user_in_project_pass_if_exists(self):
 		result = dbc.userInProject("test1", 1)
@@ -115,10 +121,12 @@ class TestDeletableUserList(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def deletable_user_list_pass_if_empty(self):
 		result = dbc.deletableUserList(1)
@@ -136,10 +144,12 @@ class TestGetProjectName(unittest.TestCase):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
 		dbc.addProject(1, "TestThisProject")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_project_name_pass_if_equal(self):
 		dbc.getProjectName(1)
@@ -152,10 +162,12 @@ class TestGetUserList(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_user_list_pass_if_not_empty(self):
 		result = dbc.getUserList(1)
@@ -168,10 +180,12 @@ class TestGetUserNameList(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_user_name_list_pass_if_not_empty(self):
 		result = dbc.getUserNameList(1)
@@ -184,10 +198,12 @@ class TestGetRole(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_role_pass_if_equal(self):
 		result = dbc.getRole(1, "test1")
@@ -200,10 +216,12 @@ class TestGetProjectList(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_project_list_pass_if_has_project(self):
 		result = dbc.getProjectList("test1")
@@ -214,10 +232,12 @@ class TestSetProjectStatus(unittest.TestCase):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
 		dbc.addProject(1, "TestThisProject")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def set_project_status_pass_if_true(self):
 		dbc.setProjectStatus(1, True)
@@ -234,10 +254,12 @@ class TestGetProjectStatus(unittest.TestCase):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
 		dbc.addProject(1, "TestThisProject")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def get_project_status_pass_if_false(self):
 		result = dbc.getProjectStatus(1)
@@ -249,10 +271,12 @@ class TestAddUserToProject(unittest.TestCase):
 		dbc.initializeDatabase()
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def add_user_to_project_pass_if_not_empty(self):
 		dbc.addUserToProject(1, "test1", "Project Manager")
@@ -266,10 +290,12 @@ class TestRemoveUser(unittest.TestCase):
 		dbc.addUser("Jimmy", "Tester", "test1", "testthis", "testthis")
 		dbc.addProject(1, "TestThisProject")
 		dbc.addUserToProject(1, "test1", "Project Manager")
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def remove_user_pass_if_empty(self):
 		dbc.removeUser("test1", 1)
@@ -280,10 +306,12 @@ class TestAddProject(unittest.TestCase):
 	def setUp(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def tearDown(self):
 		dbc.wipeDatabase()
 		dbc.initializeDatabase()
+		remove_test_repo()
 
 	def add_project_pass_if_true(self):
 		dbc.addProject(1, "TestThisProject")
