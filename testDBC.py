@@ -1,2 +1,2 @@
-import ui.testsuite
-ui.testsuite.test()
+import UI.testsuite
+UI.testsuite.test()
