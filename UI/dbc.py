@@ -8,7 +8,7 @@ ACCEPTABLE_CHARACTERS = [48,57,65,90,97,122,32]
 PASSWORD_MIN_SIZE = 6
 PASSWORD_MAX_SIZE = 20
 
-conn = psycopg2.connect("dbname=testdynamic user=postgres password = lol")
+conn = psycopg2.connect("dbname=dynamic user=postgres password = lol")
 cur = conn.cursor()
 
 class userRole(object):
