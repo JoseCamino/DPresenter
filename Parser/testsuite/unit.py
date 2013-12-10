@@ -163,3 +163,8 @@ class TestGenerateSlide(unittest.TestCase):
 		"Test that generateNewSlide() works"
 		slide = ParserFacade.generateNewSlide()
 		self.assertTrue(slide != None)
+
+	def test_generate_confidential_slide(self):
+		"Test that generateConfidentialSlide() works"
+		slide = ParserFacade.generateConfidentialSlide()
+		self.assertTrue(slide != None)
