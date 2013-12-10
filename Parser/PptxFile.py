@@ -375,7 +375,8 @@ class PptxFile:
 
       shutil.move(src, dst)
 
-      # Move the images
+      # Move media
+
       n = len(slide.getMedia())
       m = len(self.__media)
       # Check if there are media files in the slide
@@ -419,6 +420,29 @@ class PptxFile:
                      shutil.move(src, dst)
 
                   # Change the image names on the slide.xml.rels file
+                  content = content.replace(target, new_file_name)
+
+                  # Update the media list
+                  self.__media.append(new_file_name)
+                  m += 1
+
+               if (media_type == "video"):
+                  target = line[3].split("=")
+                  target = target[1].split('/')
+                  length = len(target)
+                  target = target[length - 1]
+                  target = target.replace('"', "")
+
+                  src = slide.getLocation() + '/ppt/media/' + target
+                  new_file_name = target.split('.')
+                  new_file_name[0] = "media" + str(m)
+                  new_file_name = '.'.join(new_file_name)
+                  dst = self.__location + '/ppt/media/' + new_file_name
+
+                  if (os.path.exists(src)):
+                     shutil.move(src, dst)
+
+                  # Update the names of the videos on the slide.xml.rels file
                   content = content.replace(target, new_file_name)
 
                   # Update the media list
@@ -940,7 +964,7 @@ class PptxFile:
       
       n = len(self.__media)
 
-      # Find which media files belong to the slide and move them (Only images supported for now)
+      # Find which media files belong to the slide and move them
       if (n > 0):
          f = open(slide_rel, 'r')
          try:
@@ -960,7 +984,7 @@ class PptxFile:
                media_type = media_type.split('"')
                media_type = media_type[0]
 
-               if (media_type == "image"):
+               if media_type in ("image", "video"):
                   target = line[3].split("=")
                   target = target[1].split('/')
                   length = len(target)
@@ -971,7 +995,7 @@ class PptxFile:
                   dst = directory + "/" + target
 
                   if (os.path.exists(src)):
-                     shutil.move(src, dst)
+                     shutil.move(src, dst)               
                
          finally:
             f.close()
