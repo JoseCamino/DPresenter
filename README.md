@@ -7,17 +7,26 @@ Import the ParserFacade class and call the following methods:
 
 Splitting a deck:
 ```
-ParserFacade.splitDeck(presentation_path, output_folder)   # returns a list with the location of all slides
+ParserFacade.splitDeck(deck)	#Splits a deck into individual slides. Returns a list of slides (as binary data).
 ```
 
 Merging slides:
 ```
-ParserFacade.mergeSlides(list_of_slide_locations, deck_path)   # returns the deck_path
+ParserFacade.mergeSlides(slides)	#Merges any number of slides into a deck. Input is the slides binary data. Returns the path of a temporary deck that can be deleted after it is downloaded.
 ```
 
 Generating images:
 ```
-ParserFacade.generateImage(presentation_path,  output_folder)   # returns a list with the location of all the images
+ParserFacade.generateImageFromData(data, image_paths)	#Generates an image file from each slide. Input is the binary data of the slide or deck and the list of paths of the images to be generated.
+```
+
+Generating blank slide:
+```
+ParserFacade.generateNewSlide()	#Generates a blank slide and returns its binary data.
+```
+Generating "default" confidential slide:
+```
+ParserFacade.generateConfidentialSlide()	#Generates a slide with a message warning the user that the contents of the slide are confidential. Returns the binary data of the slide.
 ```
 
 VCS Subsystem
