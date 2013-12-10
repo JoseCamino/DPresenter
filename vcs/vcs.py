@@ -181,6 +181,10 @@ class Slide(object):
 		# todo: implement this
 		pass
 
+TYPE_CURRENT = 0
+TYPE_PERSISTED = 1
+TYPE_BACKUP = 2
+
 class FileRepository(object):
 	"""
 	Internal class that deals with the actual persistence logic.
@@ -218,7 +222,7 @@ class FileRepository(object):
 
 			c.execute("""
 				CREATE TABLE presentations
-				(id integer primary key autoincrement, name text)
+				(id integer primary key autoincrement, name text, presentation_type integer)
 				""")
 
 			c.execute("""
@@ -236,8 +240,11 @@ class FileRepository(object):
 				(slide_id integer, user_id text, checkout_at integer)
 				""")
 
-
-		self.create_presentation(CurrentPresentation(self.project, name="current"))
+			# Create the current presentation
+			c.execute("""
+				INSERT INTO presentations (name, presentation_type)
+				VALUES (?, ?)
+				""", ["current", TYPE_CURRENT])
 
 	def persist_presentation(self, current_presentation, new_name):
 		"Used to add non-current presentations to the project"
@@ -246,9 +253,9 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				INSERT INTO presentations (name)
-				VALUES (?)
-				""", [new_name])
+				INSERT INTO presentations (name, presentation_type)
+				VALUES (?, ?)
+				""", [new_name, TYPE_PERSISTED])
 			new_presentation_id = c.lastrowid
 
 			# Copy slides
@@ -271,16 +278,6 @@ class FileRepository(object):
 				WHERE id = ?
 				""", [new_name, pid])
 
-	def create_presentation(self, presentation):
-		"Creates a new presentation."
-		with self.connect_to_db() as conn:
-			c = conn.cursor()
-
-			c.execute("""
-				INSERT INTO presentations (name)
-				VALUES (?)
-				""", [presentation.name])
-
 	def save_presentation(self, presentation):
 		"Saves a presentation."
 
@@ -294,8 +291,24 @@ class FileRepository(object):
 				""", [presentation.id])
 
 	def load_current_presentation(self):
-		# Todo: make more efficient
-		return self.load_presentation_list()[0]
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				SELECT id, name
+				FROM presentations
+				WHERE presentation_type = ?
+				""", [TYPE_CURRENT])
+
+			data = c.fetchone()
+			pid = data[0]
+			name = data[1]
+			presentation_data = {
+				'id': pid,
+				'name': name
+			}
+
+			return CurrentPresentation(self.project, **presentation_data)
 
 	def load_presentation_list(self):
 		presentations = []
@@ -330,22 +343,25 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT name
+				SELECT name, presentation_type
 				FROM presentations
 				WHERE id = ?
 				""", [pid])
 
 			data = c.fetchone()
 			name = data[0]
+			presentation_type = data[1]
 			presentation_data = {
 				'id': pid,
 				'name': name
 			}
 
-			if pid == 1: # TODO: Use a non-hardcoded value that doesn't depend on sqlite implementation
+			if presentation_type == TYPE_CURRENT:
 				return CurrentPresentation(self.project, **presentation_data)
-			else:
+			elif presentation_type == TYPE_PERSISTED:
 				return PersistedPresentation(self.project, **presentation_data) 
+			else:
+				return None # not implemented yet
 
 	def load_presentation_slides(self, pid):
 		with self.connect_to_db() as conn:
