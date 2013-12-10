@@ -176,11 +176,11 @@ def checkOut(project_id):
 		return not_allowed("error")
 	currentPresentation = VCS().load_project(str(project_id)).current_presentation
 	userList = dbc.getUserNameList(project_id)
-	if userList == []:
+	if len(userList) == 0:
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You need to add users first to this project for checkout.")
 	slideList = currentPresentation.slides
-	if slideList == []:
+	if len(slideList) == 0:
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You don't have any slides for users to check out.")
 	return render_template("authorizeForCheckOut.html", slides = slideList, users = userList, project_id = project_id)
@@ -194,7 +194,7 @@ def revokeCheckOut(project_id):
 	currentPresentation = VCS().load_project(str(project_id)).current_presentation
 	userList = dbc.getUserNameList(project_id)
 	#This should never realistically happen, but just in case.
-	if userList == []:
+	if len(userList) == 0:
 		if dbc.getRole(project_id, session['username']) == 'Project Manager':
 			printMii = dbc.getUserList(project_id)
 			return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You need to add users first to this project for checkout.")
@@ -202,7 +202,7 @@ def revokeCheckOut(project_id):
 		return render_template('project3.html', presentationList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "Project Manager needs to add users first to the project.")
 	#End unrealisitc occurrence
 	slideList = currentPresentation.slides
-	if slideList == []:
+	if len(slideList) == 0:
 		if dbc.getRole(project_id, session['username']) == 'Project Manager':
 			printMii = dbc.getUserList(project_id)
 			return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "You need to make some slides for the project first.")
@@ -255,7 +255,7 @@ def remove_users_from_project(project_id):
 	if not dbc.getRole(project_id, session['username']) == "Project Manager":
 		return not_allowed("error")
 	printMii = dbc.deletableUserList(project_id)
-	if printMii == []:
+	if len(printMii) == 0:
 		printMii = dbc.getUserList(project_id)
 		return render_template('project1.html', userList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "Don't have any users to remove (can't remove yourself).  Perhaps you should add some?")
 	return render_template("removeUserFromProject.html", uList = printMii, project = project_id)

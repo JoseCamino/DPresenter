@@ -2,14 +2,14 @@ import psycopg2
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 
-conn = psycopg2.connect("dbname=dynamic user=postgres password = lol")
-cur = conn.cursor()
-
 secretkey = 'erhhsdabuohewwerlqwnruqewrouir'
 
 ACCEPTABLE_CHARACTERS = [48,57,65,90,97,122,32]
 PASSWORD_MIN_SIZE = 6
 PASSWORD_MAX_SIZE = 20
+
+conn = psycopg2.connect("dbname=testdynamic user=postgres password = lol")
+cur = conn.cursor()
 
 class userRole(object):
 	def construct(self, uname, job):
@@ -26,7 +26,7 @@ def giveMetheSecretKey():
 	return secretkey
 	
 def validCharacter(char):
-	if(ord(char) >= ACCEPTABLE_CHARACTERS[0] and ord(char) > ACCEPTABLE_CHARACTERS[1]):
+	if(ord(char) >= ACCEPTABLE_CHARACTERS[0] and ord(char) <= ACCEPTABLE_CHARACTERS[1]):
 		return True
 	if(ord(char) >= ACCEPTABLE_CHARACTERS[2] and ord(char) <= ACCEPTABLE_CHARACTERS[3]):
 		return True
@@ -156,10 +156,9 @@ def setProjectStatus(project_id, status):
 def getProjectStatus(project_id):
 	sqlcommand = "SELECT frozen FROM project_list where id = %s;"
 	cur.execute(sqlcommand, [project_id])
-	value = []
 	for record in cur:
-		value.append(record[0])
-	return value
+		return record[0]
+	return None
 
 def addUserToProject(project, user, role):
 	sqlcommand = "INSERT INTO works_on VALUES(%s, %s, %s);"
@@ -196,13 +195,13 @@ def addProject(user_ID, project_name):
 
 # ONLY RUN THIS IF YOU ARE MAKING A NEW DATABASE FROM SCRATCH!  THIS IS HERE FOR INITIALIZATION AND TESTING PURPOSES!		
 def initializeDatabase():
-	sqlcommand = "CREATE TABLE user_list(FName text, LName text, username text PRIMARY KEY, password text);"
+	sqlcommand = "CREATE TABLE IF NOT EXISTS user_list(FName text, LName text, username text PRIMARY KEY, password text);"
 	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand = "CREATE TABLE project_list(ID serial PRIMARY KEY, project_name text, frozen boolean);"
+	sqlcommand = "CREATE TABLE IF NOT EXISTS project_list(ID serial PRIMARY KEY, project_name text, frozen boolean);"
 	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand = "CREATE TABLE works_on(project_ID integer, user_id text, FOREIGN KEY (project_ID) references project_list(ID), FOREIGN KEY (user_ID) references user_list(username), role text);"
+	sqlcommand = "CREATE TABLE IF NOT EXISTS works_on(project_ID integer, user_id text, FOREIGN KEY (project_ID) references project_list(ID), FOREIGN KEY (user_ID) references user_list(username), role text);"
 	cur.execute(sqlcommand)
 	conn.commit()
 	sqlcommand = "INSERT INTO project_list VALUES(0, 'Do Not Delete Mii', true);"
@@ -211,13 +210,13 @@ def initializeDatabase():
 
 # ONLY RUN THIS IF YOU ARE PLANNING TO RUN TESTS ON THE DATABASE!  DO NOT RUN THIS METHOD OTHERWISE!
 def wipeDatabase():
-	sqlcommand = "DROP TABLE works_on;"
+	sqlcommand = "DROP TABLE IF EXISTS works_on;"
 	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand = "DROP TABLE project_list;"
+	sqlcommand = "DROP TABLE IF EXISTS project_list;"
 	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand = "Drop TABLE user_list;"
+	sqlcommand = "Drop TABLE IF EXISTS user_list;"
 	cur.execute(sqlcommand)
 	conn.commit()
 
@@ -232,5 +231,5 @@ def projectExists(project_id):
 	return False
 
 def disconnect():
-        conn.close()
-        cur.close()
+    conn.close()
+    cur.close()
