@@ -1,40 +1,52 @@
-<!DOCTYPE html>
-
-<html>
-	<title>{{ name }}</title>
-	<head></head>
-	<style>
-	td, th {border: 1px solid #999; padding 0.1em 1em;}
-	</style>
-
-	<body>
-		<h1>{{ name }}</h1>
-		<br>
-		<h2>List of Users in {{ name }}</h2>
-		</br>
-		<h3>{{ warning }}</h3>
-		<table>
-			<tbody>
-				<tr>
-				<td><b>User</b></td>
-				<td><b>Role</b></td>
-				</tr>				
-				{% for userRole in userList %}
-				<tr>
-					<td>
-						{{ userRole.user_ID }}
-					</td>
-					<td>
-						{{ userRole.role }}
-					</td>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+	
+{%block content %}
+{% if warning == "Project is now Released." or warning == "Project is now Frozen." %}
+<div class="alert alert-warning">{{ warning }}</div>
+{% elif warning == "Status of Project: Unlocked" or warning == "Status of Project: Frozen" %}
+<div class="alert alert-info">{{warning}}</div>
+{% elif warning == "User added to project" %}
+<div class="alert alert-success">{{warning}}</div>
+{% else %}
+<div class="alert alert-danger">{{warning}}</div>
+{% endif %}
+<h1>{{ name }}</h1>
+<br>
+<h2>List of Users in {{ name }}</h2>
+</br>
+<div class="table">
+		<table class="table">
+		<tbody>
+			<thead>
+				<tr><th>User</th><th>Role</th>
 				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		<br>
-	<a href="{{ url_for("add_user_to_project", project_id = project) }}">Add Users from Project</a>
+			</thead>
+			{% for userRole in userList %}
+			{% if userRole.role == "Slide Creator" %}
+			<tr class ="success">
+			{% elif userRole.role == "Presentation Creator" %}
+			<tr class ="info">
+			{% else %}
+			<tr class ="warning">
+			{% endif %}
+			<td>
+				{{ userRole.user_ID }}
+			</td>
+			<td>
+				{{ userRole.role }}
+			</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+	<a href="#addUserModal" data-toggle="modal" data-target="#addUserModal">Add a User to a Project</a>
 	<br>
-	<a href= "{{ url_for("remove_users_from_project", project_id = project) }}"> Remove Users From Project</a>
+
+	{% if removeMii|count >= 1 %}
+	<a href="#removeUserModal" data-toggle="modal" data-target="#removeUserModal"> Remove A User From The Project</a>
+	{% endif %}
 	<br>
 	<br>
 	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
@@ -48,5 +60,80 @@
 	<a href="/index.html">Back to Projects Page</a>
 	<br>
 	<a href="/login.html">Log Out</a>
-	</body>
-</html>
+
+		<a href = "#projectModal" data-toggle="modal" data-target="#projectModal"> Create a Project</a>
+	<br>
+	<a href = "login.html">Log Out</a>
+
+	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add User to {{name}}</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" action = "{{url_for("addUserToProject", project_id = project)}}" method="post" name="addUserForm" role="form">
+            <div class="form-group">
+            <div class="col-sm-10">
+            	<label for="username">User Name</label>
+                <input type="username" class="form-control" name="username" placeholder="User Name" required>
+            </div>
+          </div>
+          <div class="btn-group" data-toggle="buttons">
+            	<label class="btn btn-primary">
+                <input type="radio" class="form-control" name="role" value = "Presentation Creator" id="Presentation Creator">Presentation Creator
+            </label>
+            <label class="btn btn-primary">
+                <input type="radio" class="form-control" name="role" value = "Slide Creator" id="Slide Creator">Slide Creator
+            	</label>
+           </div>
+           <br><br>
+      		<button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
+  		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
+            <div class="form-group">
+           </div>
+           <select class="form-control" name="username">
+           	{% for user in removeMii %}
+           	<option value = "{{user}}">{{user}}</option>
+           	{% endfor %}
+           </select>
+           <br><br>
+      		<button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
+  		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+	<title>{{ name }}</title>
+	<style>
+	.table
+	{		
+		width:450px;
+	}
+	</style>
+{% endblock %}

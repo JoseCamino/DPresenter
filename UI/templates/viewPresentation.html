@@ -16,6 +16,8 @@
 			<td>{{slide.name}}</td>
 		</tr>
 		{% endfor %}
+		<br>
+		<a href = "{{url_for("downloadPresentation", project_id = project_id, presentation_id = presentation_id)}}">Download this Presentation</a>
 	</table>
 </body>
 </html>
