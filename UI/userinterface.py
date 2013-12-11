@@ -1,4 +1,5 @@
 from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for
+from flask.ext.bootstrap import Bootstrap
 import os
 from werkzeug import secure_filename
 import dbc
@@ -9,6 +10,7 @@ app.debug = True
 app.config['UPLOAD_FOLDER'] = '/models'
 ALLOWED_EXTENSIONS = set(['pptx', 'ppt'])
 app.secret_key = dbc.giveMetheSecretKey()
+Bootstrap(app)
 
 @app.route("/")
 def login():
