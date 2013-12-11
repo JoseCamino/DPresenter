@@ -14,7 +14,8 @@ def get_tests():
 		TestProject,
 		TestPresentation,
 		TestSlides,
-		TestCheckinCheckout)
+		TestCheckinCheckout,
+		TestRestorePresentation)
 
 class TestCreateProject(unittest.TestCase):
 	def setUp(self):
@@ -63,7 +64,7 @@ class TestProject(unittest.TestCase):
 
 	def test_get_presentation(self):
 		self.project.current_presentation.persist("TESTVAL")
-		lastId = self.project.presentations[-1].id
+		lastId = self.project.persisted_presentations[-1].id
 		self.assertEqual(self.project.get_presentation(lastId).name, "TESTVAL")
 		
 	def test_get_current_presentation(self):
@@ -71,15 +72,8 @@ class TestProject(unittest.TestCase):
 		presentation = self.project.current_presentation
 		self.assertFalse(presentation.is_persisted())
 
-	def test_project_start_with_one_presentation(self):
-		self.assertEqual(len(self.project.presentations), 1)
-
-	def test_first_presentation_is_current(self):
-		self.project.current_presentation.persist()
-		self.project.current_presentation.persist()
-
-		first_presentation = self.project.presentations[0]
-		self.assertFalse(first_presentation.is_persisted())
+	def test_project_start_with_current_presentation(self):
+		self.assertIsNotNone(self.project.current_presentation)
 
 class TestPresentation(unittest.TestCase):
 	def setUp(self):
@@ -92,11 +86,11 @@ class TestPresentation(unittest.TestCase):
 
 	def test_persisting_adds_a_presentation(self):
 		self.presentation.persist()
-		self.assertEqual(len(self.project.presentations), 2)
+		self.assertEqual(len(self.project.persisted_presentations), 1)
 
 	def test_persisting_with_name_sets_presentation_name(self):
 		self.presentation.persist("testName")
-		self.assertEqual(self.project.presentations[1].name, "testName")
+		self.assertEqual(self.project.persisted_presentations[0].name, "testName")
 
 	def test_persist_returns_new_slide_id(self):
 		saved_id = self.presentation.persist("testName")
@@ -116,7 +110,7 @@ class TestPresentation(unittest.TestCase):
 		self.presentation.persist()
 		self.presentation.persist()
 		self.presentation.persist()
-		self.assertEqual(len(self.project.presentations), 4)
+		self.assertEqual(len(self.project.persisted_presentations), 3)
 
 	def test_renaming_presentations(self):
 		saved_presentation = self.project.get_presentation(self.presentation.persist())
@@ -201,4 +195,27 @@ class TestCheckinCheckout(unittest.TestCase):
 		self.assertIsNotNone(self.slide.checkout_user)
 		self.slide.cancel_checkout()
 		self.assertIsNone(self.slide.checkout_user)
-		
+
+class TestRestorePresentation(unittest.TestCase):
+	def setUp(self):
+		remove_test_repo()
+		self.project = vcs.create_project("testrepo")
+		self.current_presentation = self.project.current_presentation
+		self.slide_id1 = self.current_presentation.add_slide().id
+		self.slide_id2 = self.current_presentation.add_slide().id
+		self.presentation = self.project.get_presentation(self.current_presentation.persist())
+
+	def tearDown(self):
+		remove_test_repo()
+
+	def test_restored_presentation_have_same_slides_as_persisted(self):
+		# todo: remove slides from current presentation
+		self.current_presentation.add_slide()
+		self.current_presentation.add_slide()
+		self.presentation.restore()
+
+		new_current_slides = self.project.current_presentation.slides
+		self.assertEqual(len(new_current_slides), 2)
+		self.assertEqual(new_current_slides[0].id, self.slide_id1)
+		self.assertEqual(new_current_slides[1].id, self.slide_id2)
+

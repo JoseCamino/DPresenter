@@ -25,6 +25,11 @@ class VCSProject(object):
 		return self._repo.load_current_presentation()
 
 	@property
+	def persisted_presentations(self):
+		"Returns all persisted presentations"
+		return self._repo.load_persisted_presentations()
+
+	@property
 	def presentations(self):
 		"Returns a list of every single presentation"
 		return self._repo.load_presentation_list()
@@ -103,6 +108,9 @@ class PersistedPresentation(Presentation):
 		"Renames this presentation"
 		self._repo.rename_presentation(self.id, new_name)
 		self._name = new_name
+
+	def restore(self):
+		self._repo.restore_presentation(self.id)
 
 class SlideList(list):
 	@property
@@ -310,7 +318,7 @@ class FileRepository(object):
 
 			return CurrentPresentation(self.project, **presentation_data)
 
-	def load_presentation_list(self):
+	def load_persisted_presentations(self):
 		presentations = []
 
 		with self.connect_to_db() as conn:
@@ -319,8 +327,9 @@ class FileRepository(object):
 			c.execute("""
 				SELECT id, name
 				FROM presentations
+				WHERE presentation_type = ?
 				ORDER BY id ASC
-				""")
+				""", [TYPE_PERSISTED])
 
 			for row in c.fetchall():
 				pid = row[0]
@@ -331,10 +340,7 @@ class FileRepository(object):
 					'name': name
 				}
 
-				if not presentations:
-					presentations.append(CurrentPresentation(self.project, **presentation_data))
-				else:
-					presentations.append(PersistedPresentation(self.project, **presentation_data))
+				presentations.append(PersistedPresentation(self.project, **presentation_data))
 
 		return presentations
 
@@ -361,7 +367,34 @@ class FileRepository(object):
 			elif presentation_type == TYPE_PERSISTED:
 				return PersistedPresentation(self.project, **presentation_data) 
 			else:
+				raise Exception("ERROR OP")
 				return None # not implemented yet
+
+	def restore_presentation(self, pid):
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			# Make the current presentation a backup presentation
+			c.execute("""
+				UPDATE presentations
+				SET presentation_type = ?
+				WHERE presentation_type = ?
+				""", [TYPE_BACKUP, TYPE_CURRENT])
+
+			# Create a new current presentation with the same slides as this one.
+			c.execute("""
+				INSERT INTO presentations (name, presentation_type)
+				VALUES (?, ?)
+				""", ["current", TYPE_CURRENT])
+			new_current_presentation_id = c.lastrowid
+
+			# Copy slides
+			c.execute("""
+				INSERT INTO presentation_slides (presentation_id, slide_id, position)
+				SELECT ?, slide_id, position
+				FROM presentation_slides
+				WHERE presentation_id = ?
+				""", [new_current_presentation_id, pid])
 
 	def load_presentation_slides(self, pid):
 		with self.connect_to_db() as conn:
