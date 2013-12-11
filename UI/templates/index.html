@@ -4,7 +4,7 @@
 {%block content %}
 {% if warning == "You have created a new project!" %}
   <div class="alert alert-success">{{warning}}</div>
-  {% elif warning != "" %}
+  {% elif warning|length != 0 %}
   <div class="alert alert-danger">{{ warning }}</div>
   {% endif %}
 

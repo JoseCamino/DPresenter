@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html>
-	<head></head>
-	<title>{{ name }}</title>
-	<body>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+	
+{% block content %}
 		<h1>{{ name }}</h1>
 		<h3> {{ warning }}</h3>
-		<table>
+		<table class="table">
 			<tr>
 				<td><h4>Presentation Name</h4></td>
 			</tr>
@@ -14,9 +13,10 @@
 			<td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</td>
 		</tr>
 		{% endfor %}
+		<tr><td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = current.id)}}">{{current.name}}</tr>
 		</table>
-		<h3>List of Slides in Current Presentation</h3>
-		<table>
+		<h3>Check-out Status for Current Presentation</h3>
+		<table class = "table">
 			<td><b>Slide Name</b></td>
 			<td><b>Checked Out By</td>
 			{% for slide in slideList %}
@@ -26,7 +26,7 @@
 			{% endfor %}
 		</table>		
 		<br>
-		<a href = "{{ url_for("persistPresentation", project_id = project)}}">Persist a Presentation</a>
+		<a href = "#persistPresentationModal" data-toggle="modal" data-target="#persistPresentationModal">Persist Current Presentation</a>
 		<br>
 		<a href = "{{ url_for("checkOut", project_id = project)}}">Authorize a Slide for CheckOut</a>
 		<br>
@@ -37,8 +37,71 @@
 		<a href = "{{ url_for("presentation", project_id = project) }}">View Current Presentation</a>
 		<br>
 		<br>
+		<a href = "#revertPresentationModal" data-toggle="modal" data-target="#revertPresentationModal"> Revert a Presentation</a>
+		<br>
 		<a href = "{{ url_for("index")}}">Return to index</a>
 		<br>
-		<a href = "/login.html">Log Out</a>
-	</body>
-</html>
+		<a href = "{{ url_for("logout")}}">Log Out</a>
+
+<div class="modal fade" id="revertPresentationModal" tabindex="-1" role="dialog" aria-labelledby="reverPresentationModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Revert Current Presentation</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" action = "{{ url_for("revertPresentation", project_id = project) }}" method="post" name="revertPresentationForm" role="form">
+            <div class="form-group">
+           </div>
+           <select class="form-control" name="presentation_id">
+           	{% for presentation in presentationList %}
+           	<option value = "{{presentation.id}}">{{presentation.name}}</option>
+           	{% endfor %}
+           </select>
+           <br><br>
+      		<button type="submit" name ="removeUser" class="btn btn-primary">Revert Presentation</button>
+  		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="persistPresentationModal" tabindex="-1" role="dialog" aria-labelledby="reverPresentationModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Revert Current Presentation</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" action = "{{ url_for("createPresentation", project_id = project) }}" method="post" name="persistPresentationForm" role="form">
+            <div class="form-group">
+           </div>
+           	<label for="presentation_name">What would you like to name your presentation?</label>
+           	<input type="projname" class="form-control" name="presentation_name" placeholder="Presentation Name (not required)">
+           <br><br>
+      		<button type="submit" name ="persistPresentation" class="btn btn-primary">Create Presentation</button>
+  		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+	<title>{{ name }}</title>
+	<style>
+	.table
+	{		
+		width:450px;
+	}
+	</style>
+{% endblock %}
