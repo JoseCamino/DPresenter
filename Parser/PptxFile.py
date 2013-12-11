@@ -90,27 +90,15 @@ class PptxFile:
    def __extract(self, path):
       'Extracts the contents of the .pptx file into a temporary folder'
 
-      directory = path.split('/')
-      l = len(directory)
-      name = directory[l-1]
+      zipOutputDir = path[0:path.rfind(".")]
+      if not (os.path.exists(zipOutputDir)):
+         os.makedirs(zipOutputDir)
 
-      index = name.find('.')
-      directory[l-1] = name[0:index]
-      directory = '/'.join(directory)
-
-      zipPath = directory + '.zip'
-      shutil.move(path, zipPath)   # Change the extension from .pptx to .zip
-
-      if not os.path.isdir(directory):
-         os.mkdir(directory)  # Create a directory to unzip the files to
-
-      zp = zipfile.ZipFile(zipPath, "r")
-      zp.extractall(directory)   # Extract the files
+      zp = zipfile.ZipFile(path, "r")
+      zp.extractall(zipOutputDir)   # Extract the files
       zp.close()
 
-      shutil.move(zipPath, path)   # Rename back to .pptx
-
-      return directory
+      return zipOutputDir
 
 #########################################################################
 

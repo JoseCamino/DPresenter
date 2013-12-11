@@ -30,14 +30,7 @@ class TestMergeSlides(unittest.TestCase):
 		"Test that mergeSlides() returns the path of the deck"
 		folder = relative_path("test_files")
 		paths = [folder + "/slide1.pptx", folder + "/slide2.pptx"]
-		slides = []
-
-		for i in xrange(0, len(paths)):
-			bin = paths[i].replace(".pptx", ".bin")
-			shutil.copy(paths[i], bin)
-			slide = open(bin,"rb").read()
-			slides.append(slide)
-			os.remove(bin)
+		slides = [open(path,"rb").read() for path in paths]
 
 		deck = ParserFacade.mergeSlides(slides)	
 		self.assertTrue(deck[-4:] == 'pptx')
@@ -65,12 +58,9 @@ class TestSplitDeck(unittest.TestCase):
 	def test_split_deck_bin(self):
 		"Test that splitDeck() succeeds splitting a presentation with binary format"
 		folder = relative_path("test_files")
-		pptx = folder + "/testpresentation.pptx"
-		bin = pptx.replace(".pptx", ".bin")
-		shutil.copy(pptx, bin)
+		pptx = os.path.join(folder, "testpresentation.pptx")
 
-		deck = open(bin,"rb").read()
-		os.remove(bin)
+		deck = open(pptx,"rb").read()
 		slides = ParserFacade.splitDeck(deck)
 
 		self.assertEqual(len(slides), 4)
