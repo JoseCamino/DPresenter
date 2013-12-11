@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for
+from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for, Response
 from flask.ext.bootstrap import Bootstrap
 import os
 from werkzeug import secure_filename
@@ -159,11 +159,15 @@ def viewPresentations(project_id):
 	return render_template("project3.html", presentationList = printMii, slideList = printMiiToo, project = project_id, name = dbc.getProjectName(project_id), warning = "Status of Project: %s" % status)
 
 
-@app.route("/projects/<int:project_id>/<int:presentation_id>/slides")
+@app.route("/projects/<int:project_id>/<int:presentation_id>")
 def viewSlides(project_id, presentation_id):
 	if not 'username' in session:
-		return "LOGIN PLEASE."
-	return "Testing."
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != "Presentation Creator" and dbc.getRole(project_id, session['username']) != "Project Manager":
+		return not_allowed("error")
+	presentation = VCS().load_project(str(project_id)).get_presentation(presentation_id)
+	printMii = presentation.slides
+	return render_template("viewPresentation.html", project_id = project_id, presentation_id = presentation_id, name = presentation.name, slideList = printMii)
 
 @app.route("/projects/<int:project_id>/presentations/current")
 def presentation(project_id):
@@ -386,6 +390,15 @@ def addSlide(project_id):
 		return render_template('project2.html', slideList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "Slide %s has been added." % slideName)
 	return illegal_action("error")
 
+@app.route("/projects/<int:project_id>/<int:presentation_id>/<int:slide_id>")
+def downloadSlide(project_id, presentation_id, slide_id):
+	if not 'username' in session:		
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != "Project Manager" and dbc.getRole(project_id, session['username']) != "Presentation Creator" and dbc.getRole(project_id, session['username']) != "Slide Creator":
+		return not_allowed("error")
+	slide = VCS().load_project(str(project_id)).get_slide(slide_id)
+	slideFile = slide.data
+	return Response(slideFile, mimetype="pptx", headers={"Content-Disposition":"attachment;filename=%s.ppt" % slide.name})
 
 @app.route("/projects/<int:project_id>/<int:presentation_id>")
 def downloadSelectedPresentation(project_id, presentation_id):

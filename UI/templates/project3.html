@@ -7,11 +7,11 @@
 		<h3> {{ warning }}</h3>
 		<table>
 			<tr>
-				<td><h4>Presentation ID</h4></td>
+				<td><h4>Presentation Name</h4></td>
 			</tr>
 		{% for presentation in presentationList %}
 		<tr>
-			<td>{{presentation.name}}</td>
+			<td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</td>
 		</tr>
 		{% endfor %}
 		</table>
