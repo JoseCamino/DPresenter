@@ -47,3 +47,5 @@ Parser/Files/Temp/*
 projects/*
 *.sublime-workspace
 htmlcov/*
+UI/templates/bootstrap/*
+testfile

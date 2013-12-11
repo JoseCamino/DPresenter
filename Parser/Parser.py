@@ -177,3 +177,21 @@ class Parser:
       os.remove(bin)
 
       return data
+
+
+   @staticmethod
+   def generateConfidentialSlide():
+      'Generates a default confidential slide.'
+      temp_folder = relative_path("Files/Temp")
+      bin = temp_folder + "/ConfidentialSlide.bin"
+      pptx = relative_path("Files/confidential_slide.pptx")
+
+      if not (os.path.exists(temp_folder)):
+         os.makedirs(temp_folder)
+
+      shutil.copy(pptx, bin)
+
+      data = open(bin,"rb").read()
+      os.remove(bin)
+
+      return data

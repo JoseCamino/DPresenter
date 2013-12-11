@@ -37,11 +37,6 @@
 	<a href= "{{ url_for("remove_users_from_project", project_id = project) }}"> Remove Users From Project</a>
 	<br>
 	<br>
-	<a href="{{ url_for("checkOut", project_id = project)}}">Authorize Users for Checking Out Slides</a>
-	<br>
-	<a href = "{{ url_for("revokeCheckOut", project_id = project)}}">Cancel a Check Out on a Slide</a>
-	<br>
-	<br>
 	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
 	<br>
 	<a href= "{{ url_for("downloadCurrentPresentation", project_id = project) }}">Download Current Presentation</a>

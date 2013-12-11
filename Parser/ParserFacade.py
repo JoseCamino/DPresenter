@@ -31,4 +31,10 @@ class ParserFacade:
       'Generates a blank slide and returns its binary data.'
       return Parser.generateNewSlide()  
 
+   @staticmethod
+   def generateConfidentialSlide():
+      'Generates a slide with a message warning the user that the contents of the slide '
+      'are confidential. Returns the binary data of the slide.'
+      return Parser.generateConfidentialSlide()  
+
 

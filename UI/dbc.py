@@ -233,3 +233,4 @@ def projectExists(project_id):
 def disconnect():
     conn.close()
     cur.close()
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{name}}</title>
+	</head>
+<body>
+	<h1>{{ Name }}</h1>
+	<h3>Click on a page to download it</h3>
+	<table>
+		<tr>
+			<td><b>Page #</td><td>Slide Name</b></td>
+		</tr>
+		{% for slide in slideList %}
+		<tr>
+			<td><a href = "{{url_for("downloadSlide", project_id = project_id, presentation_id = presentation_id, slide_id = slide.id)}}">{{loop.index}}</td>
+			<td>{{slide.name}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+</body>
+</html>
