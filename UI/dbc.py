@@ -1,8 +1,7 @@
-import psycopg2
-import sys
+import psycopg2, os, sys
 from werkzeug.security import generate_password_hash, check_password_hash
 
-secretkey = 'erhhsdabuohewwerlqwnruqewrouir'
+secretkey = os.urandom(16)
 
 ACCEPTABLE_CHARACTERS = [48,57,65,90,97,122,32]
 PASSWORD_MIN_SIZE = 6

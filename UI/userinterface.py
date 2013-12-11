@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for, Response
 from flask.ext.bootstrap import Bootstrap
 import os
@@ -6,6 +7,7 @@ import dbc
 from vcs import VCS
 
 app = Flask(__name__)
+app.permanent_session_lifetime = timedelta(minutes=15)
 app.debug = True
 app.config['UPLOAD_FOLDER'] = '/models'
 ALLOWED_EXTENSIONS = set(['pptx', 'ppt'])
