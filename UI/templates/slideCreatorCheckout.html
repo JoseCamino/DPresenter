@@ -29,17 +29,9 @@
 </head>
 <title>Check out Slide</title>
 <body>
-	<form action = "{{url_for("checkedOut", project_id = project_id) }}" method = 'post'>
+	<form action = "{{url_for("slideCheckedOut", project_id = project_id) }}" method = 'post'>
 		<fieldset class="checkout">
-		<legend>Select user and slide for check-out</legend>
-			<div class="row">
-				<label for = "username">User Name</label>
-				<select name = "username">
-					{% for user in users %}
-					<option value = "{{ user }}">{{ user }}</option>
-					{% endfor %}
-				</select>
-			</div>
+		<legend>Select slide for check-out</legend>
 			<div class="row">
 				<label for = "slide_ID">Slide</label>
 				<select name = "slide_ID">
