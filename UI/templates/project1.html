@@ -3,13 +3,13 @@
 	
 {%block content %}
 {% if warning == "Project is now Released." or warning == "Project is now Frozen." %}
-<div class="alert alert-warning">{{ warning }}</div>
+<div class="alert alert-warning"><b>{{ warning }}</b></div>
 {% elif warning == "Status of Project: Unlocked" or warning == "Status of Project: Frozen" %}
 <div class="alert alert-info">{{warning}}</div>
 {% elif warning == "User added to project" %}
-<div class="alert alert-success">{{warning}}</div>
+<div class="alert alert-success"><b>{{warning}}</b></div>
 {% else %}
-<div class="alert alert-danger">{{warning}}</div>
+<div class="alert alert-danger"><b>{{warning}}</b></div>
 {% endif %}
 <h1>{{ name }}</h1>
 <br>
@@ -46,6 +46,32 @@
 
 	{% if removeMii|count >= 1 %}
 	<a href="#removeUserModal" data-toggle="modal" data-target="#removeUserModal"> Remove A User From The Project</a>
+  <div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
+            <div class="form-group">
+           </div>
+           <select class="form-control" name="username">
+            {% for user in removeMii %}
+            <option value = "{{user}}">{{user}}</option>
+            {% endfor %}
+           </select>
+           <br><br>
+          <button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 	{% endif %}
 	<br>
 	<br>
@@ -86,32 +112,6 @@
            </div>
            <br><br>
       		<button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
-  		</form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-	<div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
-      </div>
-      <div class="modal-body">
-          <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
-            <div class="form-group">
-           </div>
-           <select class="form-control" name="username">
-           	{% for user in removeMii %}
-           	<option value = "{{user}}">{{user}}</option>
-           	{% endfor %}
-           </select>
-           <br><br>
-      		<button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
   		</form>
       </div>
       <div class="modal-footer">

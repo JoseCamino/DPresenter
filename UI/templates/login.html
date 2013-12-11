@@ -1,11 +1,11 @@
 	{% extends "bootstrap/base.html" %}
   {% import "bootstrap/fixes.html" as fixes %}
 
-  {%block content %}
+  {% block content %}
   {% if warning == "You are now registered into the Dynamic Presenter system!" %}
-  <div class="alert alert-success">{{warning}}</div>
+  <div class="alert alert-success"><b>{{warning}}</b></div>
   {% elif warning != "" %}
-  <div class="alert alert-danger">{{ warning }}</div>
+  <div class="alert alert-danger"><b>{{ warning }}</b></div>
   {% endif %}
 	<form class="form-horizontal" action = "/index.html" method="post" name="loginForm" role="form">
   <div class="form-group">
