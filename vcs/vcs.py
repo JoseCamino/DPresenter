@@ -80,7 +80,7 @@ class Presentation(object):
 
 	def export_images(self, output_folder):
 		paths = [os.path.join(output_folder, str(slide.id) + ".jpg") for slide in self.slides]
-		generateImageFromData(self.data, paths)
+		ParserFacade.generateImageFromData(self.data, paths)
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
