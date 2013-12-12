@@ -2,15 +2,7 @@
 {% import "bootstrap/fixes.html" as fixes %}
 	
 {%block content %}
-{% if warning == "Project is now Released." or warning == "Project is now Frozen." %}
-<div class="alert alert-warning"><b>{{ warning }}</b></div>
-{% elif warning == "Status of Project: Unlocked" or warning == "Status of Project: Frozen" %}
-<div class="alert alert-info">{{warning}}</div>
-{% elif warning == "User added to project" %}
-<div class="alert alert-success"><b>{{warning}}</b></div>
-{% else %}
-<div class="alert alert-danger"><b>{{warning}}</b></div>
-{% endif %}
+<div class="alert alert-{{alert}}"><b>{{warning}}</b></div>
 <h1>{{ name }}</h1>
 <br>
 <h2>List of Users in {{ name }}</h2>

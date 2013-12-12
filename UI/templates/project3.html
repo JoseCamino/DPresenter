@@ -2,10 +2,8 @@
 {% import "bootstrap/fixes.html" as fixes %}
 	
 {% block content %}
-{% if warning == "Project is now Released." or warning == "Project is now Frozen." or warning == "Status of Project: Unlocked" or warning == "Status of Project: Frozen" %}
-<div class="alert alert-info"><b>{{ warning }}</b></div>
-{% else %}
-<div class="alert alert-warning"><b>{{ warning }}</b></div>
+{% if warning|length != 0 %}
+<div class="alert alert-{{alert}}"><b>{{ warning }}</b></div>
 {% endif %}
 
 		<h1>{{ name }}</h1>
