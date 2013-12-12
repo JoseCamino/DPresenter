@@ -1,33 +1,134 @@
-<!DOCTYPE html>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+	
+{%block content %}
 
-<html>
-	<head></head>
-	<title>{{name}}</title>
-	<style>
-	td, th {border: 1px solid #999; padding: 0.1em 1em;}
-	</style>
-	<body>
-		<h1>{{name}}</h1>
-		<h3>{{warning}}</h3>
-		<h3>List of Slides in Current Presentation</h3>
-		<table>
-			<td><b>Slide Name</b></td>
-			<td><b>Checked Out By</td>
+{% if warning|length != 0 %}
+<div class="alert alert-{{alert}}"><b>{{ warning }}</b></div>
+{% endif %}
+	<h1 class = "header">{{ name }}</h1>
+
+
+{% if slideList|count >= 1 %}
+<h3 class = "header">List of Slides in Current Presentation</h3>
+	<div class="table">
+		<table class="table">
+		<tbody>
+			<thead>
+				<tr><th>Slide Name</th><th>Checked Out By</th>
+				</tr>
+			</thead>
 			{% for slide in slideList %}
 			<tr>
 			<td>{{slide.name}}</td><td>{{slide.checkout_user}}</td>
 			</tr>
 			{% endfor %}
-		</table>
+		</tbody>
+	</table>
+</div>
+{% else %}
+<h3>Current Project Has No Slides.  You should make some slides!</h3>
+{% endif %}
+	<div class = "links">
+		<br>
+		<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
+		<br>
 		<br>
 		<a href = "{{url_for("addASlide", project_id = project)}}">Create a Slide</a>
 		<br>
-		<a href = "{{url_for("checkInSlide", project_id = project)}}">Check in a Slide</a>
+		{% if status == "Frozen" %}
+		<a href = "#frozen" data-toggle = "popover" data-content="Sorry Chief, Project is Frozen.  No Check-ins Allowed" title>Check in a Slide</a>
+		<script>$(function (){ $("#frozen").popover();});</script> 
+		{% elif slideList|count < 1 %}
+		<a href = "#frozen" data-toggle = "popover" data-content="No Slides for Check-In.  Make some please?" title>Check in a Slide</a>
+		<script>$(function (){ $("#frozen").popover();});</script> 
+		{% else %}		
+		<a href = "#checkInModal" data-toggle = "modal" data-target="#checkInModal">Check in a Slide</a>
+		<div class="modal fade" id="checkInModal" tabindex="-1" role="dialog" aria-labelledby="checkOutModal" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+       		 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        		<h4 class="modal-title" id="myModalLabel">Check-In Slide</h4>
+     	 		</div>
+      			<div class="modal-body">
+          <form class="form-horizontal" action = "{{url_for("checkInSlide", project_id = project)}}" method="post" name="slideCheckInForm" role="form" enctype = "multipart/form-data">
+           		 <div class="form-group">
+           				<label for="slide_id">Slide Name</label>
+           				<select class="form-control" name="slide_id">
+           				{% for slide in slideList %}
+           				<option value="{{slide.id}}">{{loop.index}}) {{slide.name}}</option>           	
+           				{% endfor %}
+           				</select>
+           				<div style="position:relative;">
+            <input class ="button btn-primary" type="file" name="slide_file" id = "slide_file">
+        <span class='label label-info' id="upload-file-info"></span>
+</div>
+       		</div>
+      		<button type="submit" name ="slideCheckOut" class="btn btn-primary">Check In Slide</button>
+  		</form>
+      	</div>
+      	<div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      	</div>
+    	</div>
+	  	</div>
+	  </div>
+		{% endif %}
 		<br>
-		<a href = "{{url_for("checkOut", project_id = project)}}">Check out a Slide</a>
+		<a href = "#checkOutModal" data-toggle = "modal" data-target="#checkOutModal">Check out a Slide</a>
+		<br>
 		<br>
 		<a href = "{{url_for("index")}}">Return to Projects Page</a>
 		<br>
 		<a href = "{{url_for("logout")}}">Log Out</a>
-	</body>
-</html>
+	</div>
+	
+	<div class="modal fade" id="checkOutModal" tabindex="-1" role="dialog" aria-labelledby="checkOutModal" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+       		 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        		<h4 class="modal-title" id="myModalLabel">Authorize Slide for CheckOut</h4>
+     	 		</div>
+      			<div class="modal-body">
+          <form class="form-horizontal" action = "{{url_for("slideCheckOut", project_id = project)}}" method="post" name="slideCheckOutForm" role="form">
+           		 <div class="form-group">
+           				<label for="slide_id">Slide Name</label>
+           				<select class="form-control" name="slide_ID">
+           				{% for slide in slideList %}
+           				<option value="{{slide.id}}">{{loop.index}}) {{slide.name}}</option>           	
+           				{% endfor %}
+           </select>
+       		</div>
+      		<button type="submit" name ="slideCheckOut" class="btn btn-primary">Check Out Slide</button>
+  		</form>
+      	</div>
+      	<div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      	</div>
+    	</div>
+	  	</div>
+
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+	<title>{{ name }}</title>
+	<style>
+	.table
+	{		
+		width:450px;
+		padding-left:50px;
+	}
+	.header
+	{
+		padding-left:20px;
+	}
+	.links
+	{
+		padding-left:50px;
+	}
+	</style>
+{% endblock %}

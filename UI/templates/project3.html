@@ -7,6 +7,7 @@
 {% endif %}
 
 		<h1>{{ name }}</h1>
+    <div class="table">
 		<table class="table">
 			<tr>
 				<td><h4>Presentation Name</h4></td>
@@ -27,12 +28,21 @@
 			<td>{{slide.name}}</td><td>{{slide.checkout_user}}</td>
 			</tr>
 			{% endfor %}
-		</table>		
+		</table>
+  </div>		
 		<br>
-		<a href = "#persistPresentationModal" data-toggle="modal" data-target="#persistPresentationModal">Persist Current Presentation</a>
-		<br>
-		{% if slideList|count >= 0 %}
+    <div class = "links">    
+    <a href = "{{ url_for("presentation", project_id = project) }}">View Current Presentation</a>
+  </div>
+    <br>
+		{% if slideList|count >= 0 %}    
+    <div class="links">
+    <a href = "#persistPresentationModal" data-toggle="modal" data-target="#persistPresentationModal">Persist Current Presentation</a>
+    <br>
+    <a href = "#revertPresentationModal" data-toggle="modal" data-target="#revertPresentationModal"> Revert a Presentation</a>
+    <br>
 			<a href = "#checkOutModal" data-toggle="modal" data-target="#checkOutModal">Authorize a Slide for CheckOut</a>
+    </div>
 			<div class="modal fade" id="checkOutModal" tabindex="-1" role="dialog" aria-labelledby="checkOutModal" aria-hidden="true">
   			<div class="modal-dialog">
     		<div class="modal-content">
@@ -66,20 +76,48 @@
     	</div>
 	  	</div>	
 		</div>
+    <br>
+    <div class = "links">
+    <a href = "#cancelCheckOutModal" data-toggle="modal" data-target="#cancelCheckOutModal">Cancel a CheckOut</a>
+  </div>
+      <div class="modal fade" id="cancelCheckOutModal" tabindex="-1" role="dialog" aria-labelledby="cancelCheckOutModal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Cancel a Check Out</h4>
+       </div>
+        <div class="modal-body">
+          <form class="form-horizontal" action = "{{ url_for("deauthorizeCheckOut", project_id = project) }}" method="post" name="deauthorizeCheckOutForm" role="form">
+            <div class="form-group">
+           <label for="slide_id">Slide Name</label>
+           <select class="form-control" name="slide_ID">
+            {% for slide in slideList %}
+              <option value="{{slide.id}}">{{loop.index}}) {{slide.name}}</option>            
+            {% endfor %}
+           </select>
+          </div>
+          <button type="submit" name ="removeUser" class="btn btn-primary">Deauthorize CheckOut</button>
+      </form>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+      </div>  
+    </div>
 		{% endif %}
 		<br>
-		<a href = "{{ url_for("revokeCheckOut", project_id = project)}}">Cancel a Check-Out</a>
-		<br>
-		<a href = "{{ url_for("changeProjectStatus", project_id = project) }}">Freeze/Release Project</a>
-		<br>
-		<a href = "{{ url_for("presentation", project_id = project) }}">View Current Presentation</a>
-		<br>
-		<br>
-		<a href = "#revertPresentationModal" data-toggle="modal" data-target="#revertPresentationModal"> Revert a Presentation</a>
+    <br>
+
+<div class="links">
+		<button type="button" class= "button btn-warning" onclick ="location.href='{{url_for("changeProjectStatus", project_id = project)}}'">Switch Project Status</button>
+    <br>
 		<br>
 		<a href = "{{ url_for("index")}}">Return to index</a>
 		<br>
 		<a href = "{{ url_for("logout")}}">Log Out</a>
+</div>
 
 <div class="modal fade" id="revertPresentationModal" tabindex="-1" role="dialog" aria-labelledby="reverPresentationModal" aria-hidden="true">
   <div class="modal-dialog">
@@ -136,9 +174,18 @@
 {{fixes.ie8()}}
 	<title>{{ name }}</title>
 	<style>
-	.table
-	{		
-		width:450px;
-	}
+  .table
+  {   
+    width:450px;
+    padding-left:50px;
+  }
+  .header
+  {
+    padding-left:20px;
+  }
+  .links
+  {
+    padding-left:50px;
+  }
 	</style>
 {% endblock %}

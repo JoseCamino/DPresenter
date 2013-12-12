@@ -5,6 +5,8 @@
   {% if warning == "You are now registered into the Dynamic Presenter system!" %}
   <div class="alert alert-success"><b>{{warning}}</b></div>
   {% elif warning|length != 0 %}
+  <div class="images">
+</div>
   <div class="alert alert-danger"><b>{{ warning }}</b></div>
   {% endif %}
 	<form class="form-horizontal" action = "{{url_for("index")}}" method="post" name="loginForm" role="form">
@@ -90,6 +92,11 @@ padding-left:80px;
 p.align2
 {
   padding-left:190px;
+}
+.images
+{
+  padding.left:20px;
+  width:1000px;
 }
 </style>
 

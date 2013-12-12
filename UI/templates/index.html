@@ -9,7 +9,9 @@
   {% endif %}
 
 	<body>
-	<h1>Projects Page</h1>
+	<div class = "header"><h1>Projects Page</h1></div>
+	<br>
+	<br>
 	<div class="table">
 		<table class="table">
 		<tbody>
@@ -38,9 +40,11 @@
 	</table>
 </div>
 		<br>
+	<div class ="links">
 	<a href = "#projectModal" data-toggle="modal" data-target="#projectModal"> Create a Project</a>
 	<br>
 	<a href = "{{url_for("logout")}}">Log Out</a>
+	</div>
 
 	<div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModal" aria-hidden="true">
   <div class="modal-dialog">
@@ -76,6 +80,15 @@
 	.table
 	{		
 		width:450px;
+		padding-left:50px;
+	}
+	.header
+	{
+		padding-left:20px;
+	}
+	.links
+	{
+		padding-left:50px;
 	}
 	</style>
 {% endblock %}

@@ -3,9 +3,11 @@
 	
 {%block content %}
 <div class="alert alert-{{alert}}"><b>{{warning}}</b></div>
+<div class="header">
 <h1>{{ name }}</h1>
 <br>
 <h2>List of Users in {{ name }}</h2>
+</div>
 </br>
 <div class="table">
 		<table class="table">
@@ -69,10 +71,8 @@
 	<br>
 	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
 	<br>
-	<a href= "{{ url_for("downloadCurrentPresentation", project_id = project) }}">Download Current Presentation</a>
 	<br>
-	<br>
-	<a href = "{{ url_for("changeProjectStatus", project_id = project) }}">Freeze/Release Project</a>
+  <button type="button" class= "button btn-warning" onclick ="location.href='{{url_for("changeProjectStatus", project_id = project)}}'">Switch Project Status</button>
 	<br>
 	<br>
 	<a href="{{url_for("index")}}">Back to Projects Page</a>
@@ -119,9 +119,18 @@
 {{fixes.ie8()}}
 	<title>{{ name }}</title>
 	<style>
-	.table
-	{		
-		width:450px;
-	}
+  .table
+  {   
+    width:450px;
+    padding-left:50px;
+  }
+  .header
+  {
+    padding-left:20px;
+  }
+  .links
+  {
+    padding-left:50px;
+  }
 	</style>
 {% endblock %}

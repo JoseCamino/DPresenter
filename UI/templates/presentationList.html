@@ -1,0 +1,47 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% block content %}
+<h3>Click on a Presentation Link to View It</h3>
+
+<div class= "table">
+<table class="table">
+			<tr>
+				<td><h4>Presentation Name</h4></td>
+			</tr>
+		{% for presentation in presentationList %}
+		<tr>
+			<td><a href = "{{url_for("viewSlides", project_id = project_id, presentation_id = presentation.id)}}">{{presentation.name}}</td>
+		</tr>
+		{% endfor %}
+		<tr><td><a href = "{{url_for("viewSlides", project_id = project_id, presentation_id = current.id)}}">{{current.name}}</tr>
+		</table>
+	</div>
+<div class="links">
+		<a href = "{{ url_for("show_project", project_id = project_id) }}">Back to Project Page</a>
+		<br>
+		<br>
+		<a href = "{{ url_for("index")}}">Return to index</a>
+		<br>
+		<a href = "{{ url_for("logout")}}">Log Out</a>
+</div>
+{% endblock %}
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+	<title>{{ name }}</title>
+	<style>
+  .table
+  {   
+    width:450px;
+    padding-left:50px;
+  }
+  .header
+  {
+    padding-left:20px;
+  }
+  .links
+  {
+    padding-left:50px;
+  }
+	</style>
+{% endblock %}
