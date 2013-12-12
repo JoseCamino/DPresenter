@@ -72,8 +72,7 @@ class Presentation(object):
 
 	@property
 	def data(self):
-		with open(ParserFacade.mergeSlides(self.slides.data), "rb") as file:
-			return file.read()
+		return ParserFacade.mergeSlides(self.slides.data)
 
 	def write_data_to_file(self, path):
 		path = ParserFacade.mergeSlides(self.slides.data)
