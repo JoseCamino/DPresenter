@@ -6,7 +6,7 @@ class ParserFacade:
    @staticmethod
    def mergeSlides(slides):
       'Merges any number of slides into a deck. Input is the slides binary data. '
-      'Returns the path of a temporary deck that can be deleted after it is downloaded.'
+      'Returns the binary data of the deck.'
       return Parser.mergeSlides(slides)
 
    @staticmethod

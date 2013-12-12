@@ -44,7 +44,12 @@ class Parser:
       file_name = deck.buildDeck(temp_file)
       os.remove(s1_pptx)
 
-      return file_name
+      bin = file_name.replace('.pptx', '.bin')
+      shutil.move(file_name, bin)
+      data = open(bin,"rb").read()
+      os.remove(bin)
+
+      return data
 
 
 #############################################################################################

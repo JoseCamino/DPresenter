@@ -27,13 +27,13 @@ class TestMergeSlides(unittest.TestCase):
 			shutil.rmtree(temp_folder)
 		
 	def test_merge_slides(self):
-		"Test that mergeSlides() returns the path of the deck"
+		"Test that mergeSlides() returns the deck's data"
 		folder = relative_path("test_files")
 		paths = [folder + "/slide1.pptx", folder + "/slide2.pptx"]
 		slides = [open(path,"rb").read() for path in paths]
 
 		deck = ParserFacade.mergeSlides(slides)	
-		self.assertTrue(deck[-4:] == 'pptx')
+		self.assertTrue(deck[-4:] != 'pptx')
 
 	def test_merge_slides_invalid_input(self):
 		"Test that mergeSlides() only accepts binary data"
