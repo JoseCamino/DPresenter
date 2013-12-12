@@ -35,11 +35,15 @@
 		</tbody>
 	</table>
 </div>
+<div class = "links">
 	<a href="#addUserModal" data-toggle="modal" data-target="#addUserModal">Add a User to a Project</a>
+</div>
 	<br>
 
 	{% if removeMii|count >= 1 %}
+  <div class = "links">
 	<a href="#removeUserModal" data-toggle="modal" data-target="#removeUserModal"> Remove A User From The Project</a>
+</div>
   <div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -67,6 +71,7 @@
   </div>
 </div>
 	{% endif %}
+  <div class = "links">
 	<br>
 	<br>
 	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
@@ -78,7 +83,7 @@
 	<a href="{{url_for("index")}}">Back to Projects Page</a>
 	<br>
 	<a href="{{url_for("logout")}}">Log Out</a>
-
+</div>
 	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
