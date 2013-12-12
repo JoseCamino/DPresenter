@@ -14,6 +14,9 @@ ALLOWED_EXTENSIONS = set(['pptx'])
 app.secret_key = dbc.giveMetheSecretKey()
 Bootstrap(app)
 
+def relative_path(path):
+	return os.path.join(os.path.dirname(__file__), path)
+
 @app.route("/")
 def login():
 	if 'username' in session:
@@ -75,8 +78,9 @@ def show_project(project_id, warning = None, role = None, alert = None):
 		status = "Frozen"
 	if dbc.getRole(project_id, session['username']) == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
-		printMiiToo = dbc.deletableUserList(project_id)
-		return render_template('project1.html', alert = 'info', userList = printMii, removeMii = printMiiToo, project = project_id, name = dbc.getProjectName(project_id), warning = "Status of Project: %s" % status)
+		printMiiToo = dbc.deletableUserList(project_id)		
+		printMiiThree = dbc.getConfidentialSlides(project_id)
+		return render_template('project1.html', alert = 'info', userList = printMii, removeMii = printMiiToo, project = project_id, name = dbc.getProjectName(project_id), confidential = printMiiThree, warning = "Status of Project: %s" % status)
 	if dbc.getRole(project_id, session['username']) == 'Presentation Creator':
 		printMii = project.persisted_presentations
 		printMiiThree = project.current_presentation
@@ -98,7 +102,8 @@ def show_project(project_id, warning, role, alert):
 	if role == 'Project Manager':
 		printMii = dbc.getUserList(project_id)
 		printMiiToo = dbc.deletableUserList(project_id)
-		return render_template('project1.html', alert = alert, userList = printMii, removeMii = printMiiToo, project = project_id, name = dbc.getProjectName(project_id), warning = warning)
+		printMiiThree = dbc.getConfidentialSlides(project_id)
+		return render_template('project1.html', alert = alert, userList = printMii, removeMii = printMiiToo, project = project_id, name = dbc.getProjectName(project_id), confidential = printMiiThree, warning = warning)
 	if role == 'Presentation Creator':
 		printMii = project.persisted_presentations
 		printMiiThree = project.current_presentation
@@ -188,6 +193,10 @@ def viewSlides(project_id, presentation_id):
 	if dbc.getRole(project_id, session['username']) != "Presentation Creator" and dbc.getRole(project_id, session['username']) != "Project Manager" and dbc.getRole(project_id, session['username']) != 'Slide Creator':
 		return not_allowed("error")
 	presentation = VCS().load_project(str(project_id)).get_presentation(presentation_id)
+	path = relative_path("static/%s" % project_id)
+	if not os.path.exists(path):
+		os.makedirs(path)
+	presentation.export_images(path)
 	printMii = presentation.slides
 	return render_template("viewPresentation.html", project_id = project_id, presentation_id = presentation_id, name = presentation.name, slideList = printMii)
 
@@ -297,14 +306,6 @@ def changeProjectStatus(project_id):
 		return show_project(project_id, warning = "Project is now %s." % value, role = 'Presentation Creator', alert = 'info')
 	return show_project(project_id, warning = "Project is now %s." % value, role = 'Project Manager', alert = 'info')
 
-@app.route("/projects/<int:project_id>/addASlide")
-def addASlide(project_id):
-	if not 'username' in session:		
-		return render_template("login.html", warning = "Please log-in to the system.")
-	if dbc.getRole(project_id, session['username']) != "Project Manager" and dbc.getRole(project_id, session['username']) != "Presentation Creator" and dbc.getRole(project_id, session['username']) != "Slide Creator":
-		return not_allowed("error")
-	return render_template('addASlide.html', project_id = project_id)
-
 @app.route("/projects/<int:project_id>/addSlide", methods = ['POST'])
 def addSlide(project_id):	
 	if not 'username' in session:		
@@ -315,8 +316,7 @@ def addSlide(project_id):
 		slideName = request.form['name']
 		project = VCS().load_project(str(project_id))
 		project.current_presentation.add_slide(slideName)
-		printMii = project.current_presentation.slides
-		return render_template('project2.html', slideList = printMii, project = project_id, name = dbc.getProjectName(project_id), warning = "Slide %s has been added." % slideName)
+		return show_project(project_id, warning = "Slide %s has been added." % slideName, role = 'Slide Creator', alert = 'success')
 	return illegal_action("error")
 
 @app.route("/projects/<int:project_id>/<int:presentation_id>/<int:slide_id>")
@@ -338,17 +338,46 @@ def register():
 		return render_template("login.html", warning = result)		
 	return illegal_action("error")
 
+@app.route("/projects/<int:project_id>/tagConfidential", methods = ['POST'])
+def tagSlideAsConfidential(project_id):
+	if not 'username' in session:		
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != "Project Manager" and dbc.getRole(project_id, session['username']) != "Presentation Creator" and dbc.getRole(project_id, session['username']) != "Slide Creator":
+		return not_allowed("error")
+	if request.method == 'POST':
+		slide = request.form['slide_id']
+		if dbc.isSlideConfidential(project_id, slide):			
+			return show_project(project_id, warning = "Slide is already flagged as confidential.", role = 'Slide Creator', alert = 'warning')
+		currentSlide = VCS().load_project(str(project_id)).get_slide(slide)
+		if slide.checkout_user != session['username'] and dbc.getRole(project_id, session['username']) == 'Slide Creator':
+			return show_project(project_id, warning = "You can't mark a slide as confidential if you're a Slide Creator and haven't checked it out.", role = 'Slide Creator', alert = 'danger')
+		dbc.addSlideAsConfidential(project_id, slide)
+		return show_project(project_id, warning = "Slide has been tagged as confidential.", role = 'Slide Creator', alert = 'danger')
+	return illegal_action("error")
+
+@app.route("/projects/<int:project_id>/untagConfidential", methods = ['POST'])
+def removeConfidentialTag(project_id):
+	if not 'username' in session:
+		return render_template("login.html", warning = "Please log-in to the system.")
+	if dbc.getRole(project_id, session['username']) != 'Project Manager':
+		return not_allowed("error")
+	if request.method == 'POST':
+		slide = request.form['slide_id']
+		dbc.removeSlideAsConfidential(project_id, slide)
+		return show_project(project_id, warning = "Slide confidentiality tag has been removed.", role = 'Project Manager', alert = 'warning')
+	return illegal_action("error")
+
 @app.errorhandler(404)
 def page_not_found(error):
 	return "<h1>Sorry chief, we don't have what you're looking for.  You might wanna try again.  Error 404: Can't Find It</h1>"
 
 @app.errorhandler(405)
 def illegal_action(error):
-	return "<h1>Please do not attempt to break the system.  Error 405: Illegal action.</h1>"
+	return "<h1>Please do not attempt to break the system.  Don't attempt GET requests on a required POST (etc).  Error 405: Illegal action.</h1>"
 
 @app.errorhandler(400)
 def bad_request(error):
-	return "<h1>Something went wrong.  Probably bad form requests.  Error 400: Bad form requests.</h1>"
+	return "<h1>Something went wrong.  Probably submitted a bad form request.  Error 400: Bad form requests.</h1>"
 
 @app.errorhandler(403)
 def not_allowed(error):

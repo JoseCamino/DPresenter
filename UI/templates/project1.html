@@ -43,33 +43,33 @@
 	{% if removeMii|count > 0 %}
   <div class = "links">
 	<a href="#removeUserModal" data-toggle="modal" data-target="#removeUserModal"> Remove A User From The Project</a>
-</div>
+  </div>
   <div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
-      </div>
-      <div class="modal-body">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
+        </div>
+        <div class="modal-body">
           <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
             <div class="form-group">
-           </div>
-           <select class="form-control" name="username">
-            {% for user in removeMii %}
-            <option value = "{{user}}">{{user}}</option>
-            {% endfor %}
-           </select>
-           <br><br>
-          <button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
-      </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+            <select class="form-control" name="username">
+             {% for user in removeMii %}
+             <option value = "{{user}}">{{user}}</option>
+             {% endfor %}
+            </select>
+            <br><br>
+            <button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 	{% endif %}
   <div class = "links">
 	<br>
@@ -80,11 +80,9 @@
   <button type="button" class= "button btn-warning" onclick ="location.href='{{url_for("changeProjectStatus", project_id = project)}}'">Switch Project Status</button>
 	<br>
 	<br>
-	<a href="{{url_for("index")}}">Back to Projects Page</a>
-	<br>
-	<a href="{{url_for("logout")}}">Log Out</a>
-</div>
-	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+  {% if confidential|count > 0 %}
+  <a href = "#undoConfidentialModal" data-toggle="modal" data-target="#undoConfidentialModal">Release Confidential Slide</a>
+  <div class="modal fade" id="undoConfidentialModal" tabindex="-1" role="dialog" aria-labelledby="undoConfidentialModal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -92,27 +90,65 @@
         <h4 class="modal-title" id="myModalLabel">Add User to {{name}}</h4>
       </div>
       <div class="modal-body">
-          <form class="form-horizontal" action = "{{url_for("addUserToProject", project_id = project)}}" method="post" name="addUserForm" role="form">
-            <div class="form-group">
-            <div class="col-sm-10">
-            	<label for="username">User Name</label>
-                <input type="username" class="form-control" name="username" placeholder="User Name" required>
-            </div>
-          </div>
-          <div class="btn-group" data-toggle="buttons">
-            	<label class="btn btn-primary">
-                <input type="radio" class="form-control" name="role" value = "Presentation Creator" id="Presentation Creator">Presentation Creator
-            </label>
-            <label class="btn btn-primary">
-                <input type="radio" class="form-control" name="role" value = "Slide Creator" id="Slide Creator">Slide Creator
-            	</label>
-           </div>
-           <br><br>
-      		<button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
-  		</form>
+        <form class="form-horizontal" action = "{{url_for("removeConfidentialTag", project_id = project)}}" method="post" name="removeConfidentialForm" role="form">
+        <div class="form-group">
+          <select class="form-control" name="username">
+             {% for slide in confidential %}
+             <option value = "{{slide.id}}">{{slide.name}}</option>
+             {% endfor %}
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="radio" class="form-control" name="role" value = "Presentation Creator" id="Presentation Creator">Presentation Creator
+          </label>
+           <label class="btn btn-primary">
+            <input type="radio" class="form-control" name="role" value = "Slide Creator" id="Slide Creator">Slide Creator
+           </label>
+        </div>
+        <br><br>
+        <button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+  {% endif %}
+	<a href="{{url_for("index")}}">Back to Projects Page</a>
+	<br>
+	<a href="{{url_for("logout")}}">Log Out</a>
+</div>
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add User to {{name}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action = "{{url_for("addUserToProject", project_id = project)}}" method="post" name="addUserForm" role="form">
+        <div class="form-group">
+          <div class="col-sm-10">
+           	<label for="username">User Name</label>
+            <input type="username" class="form-control" name="username" placeholder="User Name" required>
+          </div>          
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="radio" class="form-control" name="role" value = "Presentation Creator" id="Presentation Creator">Presentation Creator
+          </label>
+           <label class="btn btn-primary">
+            <input type="radio" class="form-control" name="role" value = "Slide Creator" id="Slide Creator">Slide Creator
+           </label>
+        </div>
+        <br><br>
+      	<button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
+  		  </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

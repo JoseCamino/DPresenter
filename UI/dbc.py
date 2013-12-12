@@ -21,6 +21,11 @@ class project(object):
 		self.role = job
 		self.project_name = None
 
+class confidentialSlide(object):
+	def construct(self, slide_id, name):
+		self.id = slide_id
+		self.name = name
+
 def giveMetheSecretKey():
 	return secretkey
 	
@@ -131,6 +136,39 @@ def getRole(project_ID, username):
 		result = record[0]
 	return result
 
+def addSlideAsConfidential(project_id, slide_id, slide_name):
+	sqlcommand = "INSERT INTO confidential_slides VALUES(%s, %s, %s);"
+	cur.execute(sqlcommand, [project_id, slide_id, slide_name])
+	conn.commit()
+
+def isSlideConfidential(project_id, slide_id):
+	sqlcommand = "SELECT slide_id FROM confidential_slides WHERE project_id = %s and slide_id = %s;"
+	cur.execute(sqlcommand, [project_id, slide_id])
+	if record in cur:
+		return True
+	return False
+
+def getConfidentialSlides(project_id):
+	sqlcommand = "SELECT slide_id, slide_name FROM confidential_slides WHERE project_id =%s;"
+	cur.execute(sqlcommand, [project_id])
+	slideList = []
+	for record in cur:
+		slideObject = confidentialSlide()
+		slideObject.construct(record[0], record[1])
+		slideList.append(slideObject)
+	return slideList
+
+def removeSlideAsConfidential(project_id, slide_id):
+	sqlcommand = "DELETE FROM confidential_slides WHERE project_id = %s and slide_id = %s;"
+	cur.execute(sqlcommand, [project_id, slide_id])
+	conn.commit()
+
+def publishConfidentialPresentation(project_id, slideList):
+	for slide in slideList:
+		sqlcommand = "DELETE FROM confidential_slides WHERE project_id = %s and slide_id = %s"
+		cur.execute(sqlcommand, [project_id, slide])
+		conn.commit()
+
 def getProjectList(username):
 	sqlcommand = "SELECT project_id, role FROM WORKS_ON WHERE user_ID = %s;"
 	cur.execute(sqlcommand, [username])
@@ -203,9 +241,9 @@ def initializeDatabase():
 	sqlcommand = "CREATE TABLE IF NOT EXISTS works_on(project_ID integer, user_id text, FOREIGN KEY (project_ID) references project_list(ID), FOREIGN KEY (user_ID) references user_list(username), role text);"
 	cur.execute(sqlcommand)
 	conn.commit()
-	sqlcommand - "CREATE TABLE IF NOT EXISTS confidential_slides(project_id integer, slide_id integer, confidential boolean, FOREIGN KEY (project_id) references project_list(id));"
+	sqlcommand = "CREATE TABLE IF NOT EXISTS confidential_slides(project_id integer, slide_id integer, FOREIGN KEY (project_id) references project_list(ID), slide_name text);"
 	cur.execute(sqlcommand)
-	cur.commit()
+	conn.commit()
 	sqlcommand = "INSERT INTO project_list VALUES(0, 'Do Not Delete Mii', true);"
 	cur.execute(sqlcommand)
 	conn.commit()
