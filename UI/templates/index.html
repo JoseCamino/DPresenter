@@ -40,7 +40,7 @@
 		<br>
 	<a href = "#projectModal" data-toggle="modal" data-target="#projectModal"> Create a Project</a>
 	<br>
-	<a href = "login.html">Log Out</a>
+	<a href = "{{url_for("logout")}}">Log Out</a>
 
 	<div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModal" aria-hidden="true">
   <div class="modal-dialog">
@@ -50,7 +50,7 @@
         <h4 class="modal-title" id="myModalLabel">Register for the Dynamic Presenter Project!</h4>
       </div>
       <div class="modal-body">
-          <form class="form-horizontal" action = "/buildProject.html" method="post" name="buildProjectForm" role="form">
+          <form class="form-horizontal" action = "{{url_for("buildProject")}}" method="post" name="buildProjectForm" role="form">
             <div class="form-group">
             <div class="col-sm-10">
             	<label for="projname">What would you like to name your project?</label>

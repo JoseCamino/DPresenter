@@ -7,7 +7,7 @@
   {% elif warning != "" %}
   <div class="alert alert-danger"><b>{{ warning }}</b></div>
   {% endif %}
-	<form class="form-horizontal" action = "/index.html" method="post" name="loginForm" role="form">
+	<form class="form-horizontal" action = "{{url_for("index")}}" method="post" name="loginForm" role="form">
   <div class="form-group">
     <p class="padding"><legend>Login</legend></p>
     <div class="col-sm-10">

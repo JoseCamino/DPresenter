@@ -26,8 +26,8 @@
 		<br>
 		<a href = "{{url_for("checkOut", project_id = project)}}">Check out a Slide</a>
 		<br>
-		<a href = "/index.html">Return to Projects Page</a>
+		<a href = "{{url_for("index")}}">Return to Projects Page</a>
 		<br>
-		<a href = "/login.html">Log Out</a>
+		<a href = "{{url_for{"logout"}}}">Log Out</a>
 	</body>
 </html>
