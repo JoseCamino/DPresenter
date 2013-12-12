@@ -49,3 +49,4 @@ projects/*
 htmlcov/*
 testfile
 vcs/testsuite/testdata/*
+UI/static/*
