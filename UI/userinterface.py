@@ -24,6 +24,10 @@ def login():
 		return render_template("index.html", stuff = projList)
 	return render_template("login.html", warning = "")
 
+@app.route("/about")
+def aboutPage():
+	return render_template("about.html")
+
 @app.route("/login")
 def logout():
 	session.pop('username', None)
