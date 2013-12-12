@@ -196,7 +196,7 @@ def viewSlides(project_id, presentation_id):
 	path = relative_path("static/%s" % project_id)
 	if not os.path.exists(path):
 		os.makedirs(path)
-	presentation.export_images(path)
+	#presentation.export_images(path)
 	printMii = presentation.slides
 	return render_template("viewPresentation.html", project_id = project_id, presentation_id = presentation_id, name = presentation.name, slideList = printMii)
 

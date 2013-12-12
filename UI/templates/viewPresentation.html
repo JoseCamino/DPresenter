@@ -1,14 +1,14 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{%block content %}
 <!DOCTYPE html>
-<html>
-<head>
-	<title>{{name}}</title>
-	</head>
-<body>
-	<h1>{{ Name }}</h1>
-	<h3>Click on a page to download it</h3>
-	<table>
-		<tr>
-			<td><b>Page #</td><td>Slide Name</b></td>
+	<h3 class ="header">Presentation: {{name}}</h3>
+	<h3 class="header">Click on a page link to download the slide</h3>
+	<div class = "table">
+		<table class = "table table-striped">
+			<tr>
+			<th>Page #</th><th>Slide Name</th>
 		</tr>
 		{% for slide in slideList %}
 		<tr>
@@ -17,7 +17,66 @@
 		</tr>
 		{% endfor %}
 		<br>
-		<a href = "{{url_for("downloadPresentation", project_id = project_id, presentation_id = presentation_id)}}">Download this Presentation</a>
 	</table>
-</body>
-</html>
+</div>
+
+<div class = table>
+	<button type="button" class= "button btn btn-success" onclick ="location.href='{{url_for("downloadPresentation", project_id = project_id, presentation_id = presentation_id)}}'">Download  Presentation</a>
+</div>
+
+	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner">
+    <div class="item active">
+      <img src="{{url_for("static", filename="1/1.png")}}" alt = "First Slide">
+      <div class="carousel-caption">
+      	This is junk
+      </div>
+    </div>
+      <div class="item">
+      <img src="{{url_for("static", filename="1/2.png")}}" alt = "Second Slide">
+      <div class="carousel-caption">
+      	This is moar junk
+      </div>
+    </div>
+      <div class="item">
+      <img src="{{url_for("static", filename="1/3.png")}}" alt = "Third Slide">
+      <div class="carousel-caption">
+      	This is even moar junk
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+	<style>
+  .table
+  {   
+    width:450px;
+    padding-left:50px;
+  }
+  .header
+  {
+    padding-left:20px;
+  }
+  .links
+  {
+    padding-left:50px;
+  }
+	</style>
+{% endblock %}
