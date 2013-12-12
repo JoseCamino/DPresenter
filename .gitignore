@@ -48,3 +48,4 @@ projects/*
 *.sublime-workspace
 htmlcov/*
 testfile
+vcs/testsuite/testdata/*

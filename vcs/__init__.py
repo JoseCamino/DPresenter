@@ -22,14 +22,11 @@ class VCS(object):
         
         return VCSProject(path)
         
-    def create_project(self, name, project_type="presentation"):
+    def create_project(self, name):
         """
         Creates a new project if it doesn't exists and returns a VCSProject. 
         Otherwise throws an exception.
         """
-
-        if project_type != "presentation":
-            raise Exception("ERROR: Only project type presentation is supported at this time")
 
         path = os.path.join(self.projects_location, name)
         if os.path.exists(path):

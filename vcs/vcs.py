@@ -2,6 +2,7 @@ import json
 import os
 import os.path
 import sqlite3
+import shutil
 from os.path import isfile
 
 from Parser.ParserFacade import ParserFacade
@@ -71,8 +72,12 @@ class Presentation(object):
 
 	@property
 	def data(self):
-		# TODO: Load and merge slide data
-		return "this needs to be done"
+		with open(ParserFacade.mergeSlides(self.slides.data), "rb") as file:
+			return file.read()
+
+	def write_data_to_file(self, path):
+		path = ParserFacade.mergeSlides(self.slides.data)
+		shutil.move(path, path)
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
