@@ -1,5 +1,6 @@
 import os
 import comtypes.client
+import win32com.client as w32c
 
 class Image:
    """A class that represents an image file.
@@ -11,8 +12,9 @@ class Image:
 ########### Constructor ###############################################
 
    def __init__(self):
-   	'Constructor'
-   	self.__location = []
+      'Constructor'
+      self.__location = []
+      w32c.pythoncom.CoInitialize()
 
 #######################################################################
 
