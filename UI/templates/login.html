@@ -5,10 +5,11 @@
   {% if warning == "You are now registered into the Dynamic Presenter system!" %}
   <div class="alert alert-success"><b>{{warning}}</b></div>
   {% elif warning|length != 0 %}
-  <div class="images">
-</div>
   <div class="alert alert-danger"><b>{{ warning }}</b></div>
   {% endif %}
+  <div class="images">
+    <img src = "{{url_for('static', filename="header.png")}}" width="800" depth="200">
+</div>
 	<form class="form-horizontal" action = "{{url_for("index")}}" method="post" name="loginForm" role="form">
   <div class="form-group">
     <p class="padding"><legend>Login</legend></p>
