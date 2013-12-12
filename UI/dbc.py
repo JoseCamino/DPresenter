@@ -203,12 +203,18 @@ def initializeDatabase():
 	sqlcommand = "CREATE TABLE IF NOT EXISTS works_on(project_ID integer, user_id text, FOREIGN KEY (project_ID) references project_list(ID), FOREIGN KEY (user_ID) references user_list(username), role text);"
 	cur.execute(sqlcommand)
 	conn.commit()
+	sqlcommand - "CREATE TABLE IF NOT EXISTS confidential_slides(project_id integer, slide_id integer, confidential boolean, FOREIGN KEY (project_id) references project_list(id));"
+	cur.execute(sqlcommand)
+	cur.commit()
 	sqlcommand = "INSERT INTO project_list VALUES(0, 'Do Not Delete Mii', true);"
 	cur.execute(sqlcommand)
 	conn.commit()
 
 # ONLY RUN THIS IF YOU ARE PLANNING TO RUN TESTS ON THE DATABASE!  DO NOT RUN THIS METHOD OTHERWISE!
 def wipeDatabase():
+	sqlcommand = "DROP TABLE IF EXISTS confidential_slides;"
+	cur.execute(sqlcommand)
+	conn.commit()
 	sqlcommand = "DROP TABLE IF EXISTS works_on;"
 	cur.execute(sqlcommand)
 	conn.commit()
