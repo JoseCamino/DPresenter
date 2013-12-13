@@ -123,6 +123,9 @@ class CurrentPresentation(Presentation):
 		Creates a new presentation that has the same slide data as this one.
 		Returns the newly created presentation's id
 		"""
+		new_name = new_name.strip()
+		if not new_name:
+			new_name = "Untitled"
 		return self._repo.persist_presentation(self, new_name)
 
 	def add_slide(self, name="Untitled", data=None):
