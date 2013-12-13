@@ -197,7 +197,7 @@ def revertPresentation(project_id):
 		return show_project(project_id, warning = "Current Presentation has been reverted", role = 'Presentation Creator', alert = "success")
 	return illegal_action("error")
 
-@app.route("/projects/<int:project_id>/<int:presentation_id>")
+@app.route("/projects/<int:project_id>/presentations/<int:presentation_id>")
 def viewSlides(project_id, presentation_id):
 	if not 'username' in session:
 		return render_template("login.html", warning = "Please log-in to the system.")
