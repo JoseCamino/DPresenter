@@ -1,12 +1,22 @@
 import psycopg2, os, sys
 from werkzeug.security import generate_password_hash, check_password_hash
 
+#Generates a unicode random 16 character length string for the User Interface.
 secretkey = os.urandom(16)
 
+#Parameters established for filtering out unwanted characters in a password input and Project Name.
 ACCEPTABLE_CHARACTERS = [48,57,65,90,97,122,32]
 PASSWORD_MIN_SIZE = 6
 PASSWORD_MAX_SIZE = 20
 
+#Required for connecting to the database.  You may edit it using the following parameters:
+#Parameters may be passed as the following:
+#dbname = the name of the database you're connecting to
+#user = the name of the user you want this system to connect to the database to as
+#password = the password of the database (please pick a better one other than lol, don't be like me)
+#
+#
+#
 conn = psycopg2.connect("dbname=dynamic user=postgres password = lol")
 cur = conn.cursor()
 
