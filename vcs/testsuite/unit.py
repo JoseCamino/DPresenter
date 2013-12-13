@@ -15,7 +15,8 @@ def get_tests():
 		TestPresentation,
 		TestSlides,
 		TestCheckinCheckout,
-		TestRestorePresentation)
+		TestRestorePresentation,
+		TestConfidentiality)
 
 class TestCreateProject(unittest.TestCase):
 	def setUp(self):
@@ -219,3 +220,39 @@ class TestRestorePresentation(unittest.TestCase):
 		self.assertEqual(new_current_slides[0].id, self.slide_id1)
 		self.assertEqual(new_current_slides[1].id, self.slide_id2)
 
+class TestConfidentiality(unittest.TestCase):
+	def setUp(self):
+		remove_test_repo()
+		self.project = vcs.create_project("testrepo")
+		self.slide1 = self.project.current_presentation.add_slide()
+		self.slide2 = self.project.current_presentation.add_slide()
+
+	def tearDown(self):
+		remove_test_repo()
+
+	def test_setting_confidential_saves(self):
+		self.slide1.confidential = True
+		self.assertTrue(self.slide1.confidential)
+		self.assertTrue(self.project.get_slide(self.slide1.id).confidential)
+
+	def test_previous_versions_are_also_confidential(self):
+		previous_slide_id = self.slide1.id
+		self.slide1.checkout("me")
+		self.slide1 = self.slide1.checkin("me", "test")
+		self.slide1.confidential = True
+		self.assertTrue(self.project.get_slide(previous_slide_id).confidential)
+
+	def test_updated_slides_of_confidential_slides_are_confidential(self):
+		self.slide1.confidential = True
+		self.slide1.checkout("me")
+		new_slide = self.slide1.checkin("me", "test")
+		self.assertTrue(new_slide.confidential)
+		self.assertTrue(self.project.get_slide(new_slide.id).confidential)
+
+	def test_other_slides_are_not_affected(self):
+		self.slide1.confidential = True
+		self.slide1.checkout("me")
+		new_slide = self.slide1.checkin("me", "test")
+		new_slide.confidential = True
+
+		self.assertFalse(self.project.get_slide(self.slide2.id).confidential)

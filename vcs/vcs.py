@@ -75,8 +75,9 @@ class Presentation(object):
 		return ParserFacade.mergeSlides(self.slides.data)
 
 	def write_data_to_file(self, path):
-		path = ParserFacade.mergeSlides(self.slides.data)
-		shutil.move(path, path)
+		data = ParserFacade.mergeSlides(self.slides.data)
+		with open(path, "wb") as file:
+			file.write(data)
 
 	def export_images(self, output_folder):
 		paths = [os.path.join(output_folder, str(slide.id) + ".jpg") for slide in self.slides]
@@ -138,11 +139,12 @@ class SlideDataList(object):
 
 class Slide(object):
 	"Encapsulates slide data. TODO: get_original_slide and various history related functions"
-	def __init__(self, project, slide_id, name, original_slide):
+	def __init__(self, project, slide_id, name, original_slide, confidential):
 		self._project = project
 		self._id = slide_id
 		self._name = name
-		self._original_slide_id = original_slide
+		self._original_slide_id = original_slide if original_slide else slide_id
+		self._confidential = confidential
 
 	@property
 	def id(self):
@@ -175,6 +177,21 @@ class Slide(object):
 	def checkout_user(self):
 		"Returns the user id of the user who checked out this slide, or null if it isn't checked out"
 		return self.project._repo.get_checkout_user(self.id)
+
+	@property
+	def confidential(self):
+		"Returns true if this slide is confidential, otherwise false."
+		return self._confidential
+
+	@confidential.setter
+	def confidential(self, value):
+		"""
+		Sets whether or not this slide is confidential. If a slide is confidential, this
+		slide and every version of this slide in history will be obscured from unauthorized users.
+		"""
+		self.project._repo.set_confidential(self._original_slide_id, value)
+		self._confidential = value
+		return value # allow chaining
 	
 	def checkout(self, user_id):
 		"Checks out a slide, preventing checkout by other users"
@@ -243,7 +260,7 @@ class FileRepository(object):
 
 			c.execute("""
 				CREATE TABLE slides
-				(id integer primary key autoincrement, name text, original_slide integer)
+				(id integer primary key autoincrement, name text, original_slide integer, confidential integer)
 				""")
 
 			c.execute("""
@@ -409,7 +426,7 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT ps.slide_id, s.name, s.original_slide
+				SELECT ps.slide_id, s.name, s.original_slide, s.confidential
 				FROM presentation_slides ps 
 					JOIN slides s
 						ON ps.slide_id = s.id
@@ -422,7 +439,8 @@ class FileRepository(object):
 				slide_id = row[0]
 				name = row[1]
 				original_slide = row[2]
-				slide = Slide(self.project, slide_id, name, original_slide)
+				confidential = row[3]
+				slide = Slide(self.project, slide_id, name, original_slide, confidential)
 				slides.append(slide)
 
 			return slides
@@ -433,7 +451,7 @@ class FileRepository(object):
 
 			# todo: load more data
 			c.execute("""
-				SELECT id, name, original_slide
+				SELECT id, name, original_slide, confidential
 				FROM slides
 				WHERE id = ?
 				""", [slide_id])
@@ -443,7 +461,8 @@ class FileRepository(object):
 				slide_id = row[0]
 				name = row[1]
 				original_slide = row[2]
-				return Slide(self.project, slide_id, name, original_slide)
+				confidential = row[3] == 1
+				return Slide(self.project, slide_id, name, original_slide, confidential)
 
 			raise Exception("Slide with id %s doesn't exist" % slide_id)
 
@@ -479,7 +498,7 @@ class FileRepository(object):
 				VALUES (?, ?)
 				""", [pid, slide_id])
 
-			return Slide(self.project, slide_id, slide_name, None)
+			return Slide(self.project, slide_id, slide_name, None, False)
 
 	def get_checkout_user(self, slide_id):
 		with self.connect_to_db() as conn:
@@ -542,9 +561,12 @@ class FileRepository(object):
 
 			# Add the new slide to the database
 			c.execute("""
-				INSERT INTO slides (name, original_slide)
-				VALUES ((SELECT name FROM slides WHERE id = ?), ?)
-				""", [slide_id, original_slide])
+				INSERT INTO slides (name, original_slide, confidential)
+				VALUES (
+					(SELECT name FROM slides WHERE id = ?),
+					?,
+					(SELECT confidential FROM slides WHERE id = ?))
+				""", [slide_id, original_slide, slide_id])
 			new_slide_id = c.lastrowid
 
 			# Update the current presentation to point to the new slide
@@ -577,3 +599,14 @@ class FileRepository(object):
 				DELETE FROM slide_checkout
 				WHERE slide_id = ?
 				""", [slide_id])
+
+	def set_confidential(self, original_slide_id, value):
+		db_value = 1 if value else 0
+		with self.connect_to_db() as conn:
+			c = conn.cursor()
+
+			c.execute("""
+				UPDATE slides
+				SET confidential = ?
+				WHERE (original_slide = ? AND original_slide <> NULL) OR (id = ?)
+				""", [db_value, original_slide_id, original_slide_id])
