@@ -304,7 +304,7 @@ def checkOut(project_id):
 def slideCheckOut(project_id):	
 	if not 'username' in session:
 		return render_template("login.html", warning = "Please Log-in to the system.")
-		role = dbc.getRole(project_id, session['username'])
+	role = dbc.getRole(project_id, session['username'])
 	if role != 'Project Manager' and role != 'Presentation Creator' and role != 'Slide Creator':
 		return not_allowed("error")
 	if request.method == 'POST':
