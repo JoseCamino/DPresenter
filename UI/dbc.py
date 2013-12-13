@@ -144,7 +144,7 @@ def addSlideAsConfidential(project_id, slide_id, slide_name):
 def isSlideConfidential(project_id, slide_id):
 	sqlcommand = "SELECT slide_id FROM confidential_slides WHERE project_id = %s and slide_id = %s;"
 	cur.execute(sqlcommand, [project_id, slide_id])
-	if record in cur:
+	for record in cur:
 		return True
 	return False
 

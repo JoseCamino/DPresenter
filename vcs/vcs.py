@@ -618,6 +618,7 @@ class FileRepository(object):
 				""", [slide_id])
 
 	def set_confidential(self, original_slide_id, value):
+		print original_slide_id
 		db_value = 1 if value else 0
 		with self.connect_to_db() as conn:
 			c = conn.cursor()
@@ -625,5 +626,5 @@ class FileRepository(object):
 			c.execute("""
 				UPDATE slides
 				SET confidential = ?
-				WHERE (original_slide = ? AND original_slide <> NULL) OR (id = ?)
+				WHERE (original_slide = ? AND original_slide IS NOT NULL) OR (id = ?)
 				""", [db_value, original_slide_id, original_slide_id])

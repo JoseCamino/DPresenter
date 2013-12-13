@@ -350,14 +350,14 @@ def tagSlideAsConfidential(project_id):
 		return not_allowed("error")
 	if request.method == 'POST':
 		slide = request.form['slide_id']
-		if dbc.isSlideConfidential(project_id, slide):			
-			return show_project(project_id, warning = "Slide is already flagged as confidential.", role = 'Slide Creator', alert = 'warning')
+		print slide
 		currentSlide = VCS().load_project(str(project_id)).get_slide(slide)
+		if currentSlide.confidential:		
+			return show_project(project_id, warning = "Slide is already flagged as confidential.", role = 'Slide Creator', alert = 'warning')
 		if currentSlide.checkout_user != session['username'] and dbc.getRole(project_id, session['username']) == 'Slide Creator':
 			return show_project(project_id, warning = "You can't mark a slide as confidential if you're a Slide Creator and haven't checked it out.", role = 'Slide Creator', alert = 'danger')
 		currentSlide.cancel_checkout()
 		currentSlide.confidential = True
-		dbc.addSlideAsConfidential(project_id, currentSlide.id, currentSlide.name)
 		return show_project(project_id, warning = "Slide has been tagged as confidential.", role = 'Slide Creator', alert = 'danger')
 	return illegal_action("error")
 
@@ -369,8 +369,8 @@ def removeConfidentialTag(project_id):
 		return not_allowed("error")
 	if request.method == 'POST':
 		slide = request.form['slide_id']
-		dbc.removeSlideAsConfidential(project_id, slide)
-		VCS().get_project(str(project_id)).get_slide(slide).confidential = False
+		print slide
+		VCS().load_project(str(project_id)).get_slide(slide).confidential = False
 		return show_project(project_id, warning = "Slide confidentiality tag has been removed.", role = 'Project Manager', alert = 'warning')
 	return illegal_action("error")
 
