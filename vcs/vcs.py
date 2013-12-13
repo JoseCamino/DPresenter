@@ -72,7 +72,23 @@ class Presentation(object):
 
 	@property
 	def data(self):
+		"Returns the presentation data with all the slides merged together"
 		return ParserFacade.mergeSlides(self.slides.data)
+
+	@property
+	def data_obfuscated(self):
+		"Returns the presentation data, with all confidential slides turned into dummy warning messages"
+		confidential_slide_data = None
+		slide_data = []
+		for slide in self.slides:
+			if slide.confidential:
+				if not confidential_slide_data:
+					confidential_slide_data = ParserFacade.generateConfidentialSlide()
+				slide_data.append(confidential_slide_data)
+			else:
+				slide_data.append(slide.data)
+
+		return ParserFacade.mergeSlides(slide_data)
 
 	def write_data_to_file(self, path):
 		data = ParserFacade.mergeSlides(self.slides.data)
