@@ -554,9 +554,9 @@ class FileRepository(object):
 				WHERE slide_id = ?
 				  AND presentation_id = (SELECT id
 				  	                     FROM presentations
-				  	                     ORDER BY id ASC
+				  	                     WHERE presentation_type = ?
 				  	                     LIMIT 1)
-				""", [new_slide_id, slide_id])
+				""", [new_slide_id, slide_id, TYPE_CURRENT])
 
 			# Add the new slide data
 			self.save_data("slidedata/%d" % new_slide_id, data)
