@@ -470,8 +470,8 @@ class FileRepository(object):
 
 			# Create a new current presentation with the same slides as this one.
 			c.execute("""
-				INSERT INTO presentations (name, presentation_type)
-				VALUES (?, ?)
+				INSERT INTO presentations (name, presentation_type, created_at)
+				VALUES (?, ?, datetime('now'))
 				""", ["current", TYPE_CURRENT])
 			new_current_presentation_id = c.lastrowid
 

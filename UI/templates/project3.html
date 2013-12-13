@@ -24,7 +24,10 @@
       </tr>
       {% for presentation in presentationList|reverse %}
         <tr>
-          <td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</td>
+          <td>
+            <a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</a>
+          </td>
+          <td>{{ presentation.created_at }}</td>
         </tr>
       {% endfor %}
     </tbody>
