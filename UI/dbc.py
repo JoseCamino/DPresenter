@@ -14,31 +14,33 @@ PASSWORD_MAX_SIZE = 20
 #dbname = the name of the database you're connecting to
 #user = the name of the user you want this system to connect to the database to as
 #password = the password of the database (please pick a better one other than lol, don't be like me)
-#
-#
-#
+#host = address of the host you're trying to connect to (defaults to local machine)
+#port = the port you need to connect to (defaults to 5432)
 conn = psycopg2.connect("dbname=dynamic user=postgres password = lol")
+# necessary after conn to cursor to the database
 cur = conn.cursor()
 
+#Result of calling getUserList
+#Will push the User Name and the Role
 class userRole(object):
 	def construct(self, uname, job):
 		self.user_ID = uname
 		self.role = job
 
+#Result of calling getProjectList
+#Will get the Name of the Project and the Role
 class project(object):
 	def construct(self, projid, job):
 		self.project_id = projid
 		self.role = job
 		self.project_name = None
 
-class confidentialSlide(object):
-	def construct(self, slide_id, name):
-		self.id = slide_id
-		self.name = name
-
+#Helper Function for the UI to get a Secret Key for Sessions
 def giveMetheSecretKey():
 	return secretkey
-	
+
+
+#Checks the Ordinal value of the character given.  Basically, if the character is not alphanumeric, it's not valid.	
 def validCharacter(char):
 	if(ord(char) >= ACCEPTABLE_CHARACTERS[0] and ord(char) <= ACCEPTABLE_CHARACTERS[1]):
 		return True
@@ -50,12 +52,14 @@ def validCharacter(char):
 		return True
 	return False
 
+#Uses built in werkzeug security function to compare the password you got with the one in the database.
 def checkPassword(username, password):
 	sqlcommand = "SELECT password FROM user_list where username = %s;"
 	cur.execute(sqlcommand, [username])
 	for record in cur:
 		return check_password_hash(record[0], password)
 
+#Checks if the user exists in the database.
 def userExists(username):
 	sqlcommand = "SELECT username From user_list where username = %s;"
 	cur.execute(sqlcommand, [username])
@@ -64,6 +68,7 @@ def userExists(username):
 			return True
 	return False
 
+#Checks if the user is in the project being checked.
 def userInProject(username, project_ID):
 	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s;"
 	cur.execute(sqlcommand, [project_ID])
@@ -72,6 +77,7 @@ def userInProject(username, project_ID):
 			return True
 	return False
 
+#REturns a list of all users that can be removed from the project.  Just user IDs, no user objects.
 def deletableUserList(project_ID):
 	sqlcommand = "SELECT user_id FROM works_on WHERE project_id = %s AND role != 'Project Manager';"
 	cur.execute(sqlcommand, [project_ID])
@@ -80,6 +86,8 @@ def deletableUserList(project_ID):
 		userList.append(record[0])
 	return userList
 	
+#Adds a User to the Database.  Returns a failure message if any inappropriate conditions were met (should provide a better implementation).
+#Utilizes werkzeug api to salt and hash the password. Yes, it works.
 def addUser(FName, LName, username, password, repeatpass):
 	sqlcommand = "SELECT username FROM user_list;"
 	cur.execute(sqlcommand)
@@ -106,6 +114,7 @@ def addUser(FName, LName, username, password, repeatpass):
 	result = "You are now registered into the Dynamic Presenter system!"
 	return result
 
+#Returns the name of the project for that project id, beause displaying project ids is a bit...silly to read.
 def getProjectName(project_id):
 	sqlcommand = "SELECT project_name FROM project_list WHERE ID = %s;"
 	cur.execute(sqlcommand, [project_id])
@@ -114,6 +123,7 @@ def getProjectName(project_id):
 		result = record[0]
 	return result
 	
+#Returns a list of user objects with their name (not username) and their role.
 def getUserList(project_ID):
 	sqlcommand = "SELECT user_ID, role FROM WORKS_ON WHERE project_ID = %s;"
 	cur.execute(sqlcommand, [project_ID])
@@ -130,6 +140,7 @@ def getUserList(project_ID):
 			user.user_ID = name
 	return userList
 
+#Returns a list of User Names, done for form handling.
 def getUserNameList(project_ID):
 	sqlcommand = "SELECT user_ID from WORKS_ON WHERE project_ID = %s;"
 	cur.execute(sqlcommand, [project_ID])
@@ -138,6 +149,7 @@ def getUserNameList(project_ID):
 		userList.append(record[0])
 	return userList
 
+#Returns the role of the target user in that project.  This is done for authorization checks.
 def getRole(project_ID, username):
 	sqlcommand = "SELECT role from WORKS_ON where project_ID = %s AND user_ID = %s;"
 	cur.execute(sqlcommand, [project_ID, username])
@@ -146,6 +158,7 @@ def getRole(project_ID, username):
 		result = record[0]
 	return result
 
+#Returns the Object List of projects with their ID, Name and Role.  Done for printing your list of projects.
 def getProjectList(username):
 	sqlcommand = "SELECT project_id, role FROM WORKS_ON WHERE user_ID = %s;"
 	cur.execute(sqlcommand, [username])
@@ -162,11 +175,13 @@ def getProjectList(username):
 			projectList[x].project_name = record[0]
 	return projectList
 
+#Sets the project Status of the project in status (Frozen or Released (True/False)).  This is for freezing and releasing the project.
 def setProjectStatus(project_id, status):
 	sqlcommand = "UPDATE project_list SET frozen = %s WHERE id = %s;"
 	cur.execute(sqlcommand, [status, project_id])
 	conn.commit()
 
+#REturns the status of the project (True for Frozen, False for Released), returns None if project doesn't exist.
 def getProjectStatus(project_id):
 	sqlcommand = "SELECT frozen FROM project_list where id = %s;"
 	cur.execute(sqlcommand, [project_id])
@@ -174,17 +189,20 @@ def getProjectStatus(project_id):
 		return record[0]
 	return None
 
+#Adds the user to the target project
 def addUserToProject(project, user, role):
 	sqlcommand = "INSERT INTO works_on VALUES(%s, %s, %s);"
 	entry = [project, user, role]
 	cur.execute(sqlcommand, entry)	
 	conn.commit()
-	
+
+#Removes the user from the target project
 def removeUser(username, project_ID):
 	sqlcommand = "DELETE FROM works_on WHERE user_ID = %s AND project_id = %s;"
 	cur.execute(sqlcommand, [username, project_ID])
 	conn.commit()
 
+#Creates a Project.  Returns a warning message if it fails to do so.  Otherwise, returns the id.  Need to have a better way to implement this.
 def addProject(user_ID, project_name):
 	if len(project_name) < 5:
 		return "Your project name has too few characters.  Please make project names at least 5 characters or more."
@@ -244,6 +262,7 @@ def projectExists(project_id):
 			return True
 	return False
 
+#Unused Method
 def disconnect():
     conn.close()
     cur.close()
