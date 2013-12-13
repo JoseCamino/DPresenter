@@ -200,7 +200,7 @@ def viewSlides(project_id, presentation_id):
 	path = relative_path("static/%s" % project_id)
 	if not os.path.exists(path):
 		os.makedirs(path)
-	presentation.export_images(path)
+	presentation.export_images(path, hide_confidential = True)
 	printMii = presentation.slides
 	return render_template("viewPresentation.html", project_id = project_id, presentation_id = presentation_id, name = presentation.name, slideList = printMii)
 
@@ -353,9 +353,11 @@ def tagSlideAsConfidential(project_id):
 		if dbc.isSlideConfidential(project_id, slide):			
 			return show_project(project_id, warning = "Slide is already flagged as confidential.", role = 'Slide Creator', alert = 'warning')
 		currentSlide = VCS().load_project(str(project_id)).get_slide(slide)
-		if slide.checkout_user != session['username'] and dbc.getRole(project_id, session['username']) == 'Slide Creator':
+		if currentSlide.checkout_user != session['username'] and dbc.getRole(project_id, session['username']) == 'Slide Creator':
 			return show_project(project_id, warning = "You can't mark a slide as confidential if you're a Slide Creator and haven't checked it out.", role = 'Slide Creator', alert = 'danger')
-		dbc.addSlideAsConfidential(project_id, slide)
+		currentSlide.cancel_checkout()
+		currentSlide.confidential = True
+		dbc.addSlideAsConfidential(project_id, currentSlide.id, currentSlide.name)
 		return show_project(project_id, warning = "Slide has been tagged as confidential.", role = 'Slide Creator', alert = 'danger')
 	return illegal_action("error")
 
@@ -368,6 +370,7 @@ def removeConfidentialTag(project_id):
 	if request.method == 'POST':
 		slide = request.form['slide_id']
 		dbc.removeSlideAsConfidential(project_id, slide)
+		VCS().get_project(str(project_id)).get_slide(slide).confidential = False
 		return show_project(project_id, warning = "Slide confidentiality tag has been removed.", role = 'Project Manager', alert = 'warning')
 	return illegal_action("error")
 

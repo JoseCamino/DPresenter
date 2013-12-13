@@ -2,20 +2,18 @@
 {% import "bootstrap/fixes.html" as fixes %}
 	
 {%block content %}
-<div class="alert alert-{{alert}}"><b>{{warning}}</b></div>
-<div class="header">
-<h1>{{ name }}</h1>
-<br>
-<h2>List of Users in {{ name }}</h2>
+<div class="alert_window">
+  <div class="alert alert-{{alert}}"><b>{{warning}}</b></div>
 </div>
-</br>
+<h1 class = "header">{{ name }}</h1>
+<h2 class = "header">List of Users in {{ name }}</h2>
+  <br>
 <div class="table">
-		<table class="table">
-		<tbody>
-			<thead>
-				<tr><th>User</th><th>Role</th>
-				</tr>
-			</thead>
+	<table class="table">
+		<thead>
+		  <tr><th>User</th><th>Role</th></tr>
+		</thead>
+    <tbody>
 			{% for userRole in userList %}
 			{% if userRole.role == "Slide Creator" %}
 			<tr class ="success">
@@ -35,43 +33,19 @@
 		</tbody>
 	</table>
 </div>
+
 <div class = "links">
 	<a href="#addUserModal" data-toggle="modal" data-target="#addUserModal">Add a User to a Project</a>
 </div>
 	<br>
 
-	{% if removeMii|count > 0 %}
-  <div class = "links">
+{% if removeMii|count > 0 %}
+<div class = "links">
 	<a href="#removeUserModal" data-toggle="modal" data-target="#removeUserModal"> Remove A User From The Project</a>
-  </div>
-  <div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
-        </div>
-        <div class="modal-body">
-          <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
-            <div class="form-group">
-            <select class="form-control" name="username">
-             {% for user in removeMii %}
-             <option value = "{{user}}">{{user}}</option>
-             {% endfor %}
-            </select>
-            <br><br>
-            <button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-	{% endif %}
-  <div class = "links">
+</div>
+{% endif %}
+
+<div class = "links">
 	<br>
 	<br>
 	<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
@@ -80,46 +54,20 @@
   <button type="button" class= "button btn-warning" onclick ="location.href='{{url_for("changeProjectStatus", project_id = project)}}'">Switch Project Status</button>
 	<br>
 	<br>
-  {% if confidential|count > 0 %}
-  <a href = "#undoConfidentialModal" data-toggle="modal" data-target="#undoConfidentialModal">Release Confidential Slide</a>
-  <div class="modal fade" id="undoConfidentialModal" tabindex="-1" role="dialog" aria-labelledby="undoConfidentialModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Add User to {{name}}</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-horizontal" action = "{{url_for("removeConfidentialTag", project_id = project)}}" method="post" name="removeConfidentialForm" role="form">
-        <div class="form-group">
-          <select class="form-control" name="username">
-             {% for slide in confidential %}
-             <option value = "{{slide.id}}">{{slide.name}}</option>
-             {% endfor %}
-        </div>
-        <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary">
-            <input type="radio" class="form-control" name="role" value = "Presentation Creator" id="Presentation Creator">Presentation Creator
-          </label>
-           <label class="btn btn-primary">
-            <input type="radio" class="form-control" name="role" value = "Slide Creator" id="Slide Creator">Slide Creator
-           </label>
-        </div>
-        <br><br>
-        <button type="submit" name ="addUser" class="btn btn-primary">Add User</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
 </div>
-  {% endif %}
+
+{% if confidential|count > 0 %}
+<div class = "links">
+  <a href = "#undoConfidentialModal" data-toggle="modal" data-target="#undoConfidentialModal">Release Confidential Slide</a>
+</div>
+{% endif %}
+
+<div class = "links">
 	<a href="{{url_for("index")}}">Back to Projects Page</a>
 	<br>
 	<a href="{{url_for("logout")}}">Log Out</a>
 </div>
+
 <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -153,6 +101,60 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="removeUserModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Remove User from {{name}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action = "{{ url_for("removeUserFromProject", project_id = project) }}" method="post" name="removeUserForm" role="form">
+          <div class="form-group">
+          <select class="form-control" name="username">
+           {% for user in removeMii %}
+           <option value = "{{user}}">{{user}}</option>
+           {% endfor %}
+          </select>
+          <br><br>
+          <button type="submit" name ="removeUser" class="btn btn-primary">Remove User</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="undoConfidentialModal" tabindex="-1" role="dialog" aria-labelledby="undoConfidentialModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+       <h4 class="modal-title" id="myModalLabel">Release Confidential Slide</h4>
+      </div>
+    <div class="modal-body">
+      <form class="form-horizontal" action = "{{url_for("removeConfidentialTag", project_id = project)}}" method="post" name="removeConfidentialForm" role="form">
+      <div class="form-group">
+        <select class="form-control" name="slide_id">
+           {% for slide in confidential %}
+           <option value = "{{slide.id}}">{{slide.name}}</option>
+           {% endfor %}
+        </select>
+      </div>
+      <br><br>
+      <button type="submit" name ="untagConfidential" class="btn btn-primary">Undo Confidential</button>
+      </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block head %}
@@ -172,6 +174,10 @@
   .links
   {
     padding-left:50px;
+  }
+  .alert_window
+  {
+    width:800px;
   }
 	</style>
 {% endblock %}

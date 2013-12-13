@@ -28,7 +28,35 @@
 </div>
 <div class="links">
 		<a href = "{{ url_for("viewPresentations", project_id = project) }}">View List of Presentations</a>
+    <br>
+    <a href = "#confidentialSlideModal" data-toggle="modal" data-target="#confidentialSlideModal">Tag a Slide as Confidential</a>
 	</div>
+  <div class="modal fade" id="confidentialSlideModal" tabindex="-1" role="dialog" aria-labelledby="confidentialSlideModal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Select the Slide</h4>
+            </div>
+              <div class="modal-body">
+                  <form class="form-horizontal" action = "{{url_for("tagSlideAsConfidential", project_id = project)}}" method="post" name="confidentialSlideForm" role="form">
+                     <div class="form-group">
+                      <label for="name">Select Slide to Make Confidential</label>
+                      <select class="form-control" name="slide_id">
+                      {% for slide in slideList %}
+                      <option value="{{slide.id}}">{{loop.index}}) {{slide.name}}</option>            
+                      {% endfor %}
+                      </select>
+                  </div>
+                  <button type="submit" name ="addSlide" class="btn btn-primary">Tag As Confidential</button>
+              </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+              </div>
+          </div>
+        </div>
+      </div>
 {% else %}
 <div class="alert alert-warning"><b>Current Project Has No Slides.  You should make some slides!</b></div>
 {% endif %}
