@@ -10,7 +10,7 @@ app = Flask(__name__)
 #Sets the Session Timer.  Removing this defaults the session time to 31 days.
 app.permanent_session_lifetime = timedelta(minutes=15)
 #Set to false if you want to push this server live.  It's not a good idea to leave debug open when the server is taking outside TCP requets.
-app.debug = True
+app.debug = False
 #Unused
 app.config['UPLOAD_FOLDER'] = '/models'
 #Done to prevent upload of any unwanted files.  Unfortunately, this isn't perfect and people can still damage the system by sending a "fake" .pptx file.
@@ -476,7 +476,7 @@ def isFileAllowed(filename):
 #Port: Listening Port the System will Check
 #Host: add the parameter host='0.0.0.0' to get the server to listen to outside requests.
 def run_app():
-	app.run(port=80)
+	app.run(port=80, host='0.0.0.0')
 
 if __name__ == "__main__":
     run_app()
