@@ -143,6 +143,19 @@ class SlideList(list):
 	def data(self):
 		return SlideDataList(self)
 
+	@property
+	def confidential(self):
+		"Filters the slide list to only confidential slides"
+		# TODO: Use monads or whatever they're called so that the actual slide data isn't read until the list is looped.
+		# in other words, allow the slide list to "queue" requests and do the proper query request
+		return filter(lambda x: x.confidential, self)
+
+	@property
+	def public(self):
+		"Filters the slide list to non-confidential slides"
+		# TODO: Same as confidential. Use a monad pattern
+		return filter(lambda x: not x.confidential, self)
+
 # Helper used to implement the proxy pattern. Only load slide data when we need it
 class SlideDataList(object):
 	def __init__(self, slides):
@@ -618,7 +631,6 @@ class FileRepository(object):
 				""", [slide_id])
 
 	def set_confidential(self, original_slide_id, value):
-		print original_slide_id
 		db_value = 1 if value else 0
 		with self.connect_to_db() as conn:
 			c = conn.cursor()

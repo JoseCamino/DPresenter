@@ -226,6 +226,7 @@ class TestConfidentiality(unittest.TestCase):
 		self.project = vcs.create_project("testrepo")
 		self.slide1 = self.project.current_presentation.add_slide()
 		self.slide2 = self.project.current_presentation.add_slide()
+		self.slide3= self.project.current_presentation.add_slide()
 
 	def tearDown(self):
 		remove_test_repo()
@@ -241,6 +242,7 @@ class TestConfidentiality(unittest.TestCase):
 		self.slide1 = self.slide1.checkin("me", "test")
 		self.slide1.confidential = True
 		self.assertTrue(self.project.get_slide(previous_slide_id).confidential)
+		self.assertTrue(self.project.get_slide(self.slide1.id).confidential)
 
 	def test_updated_slides_of_confidential_slides_are_confidential(self):
 		self.slide1.confidential = True
@@ -256,3 +258,17 @@ class TestConfidentiality(unittest.TestCase):
 		new_slide.confidential = True
 
 		self.assertFalse(self.project.get_slide(self.slide2.id).confidential)
+
+	def test_slide_list_confidential_returns_only_confidential(self):
+		self.slide1.confidential = True
+		confidential_slides = self.project.current_presentation.slides.confidential
+		self.assertEqual(len(confidential_slides), 1)
+		for slide in confidential_slides:
+			self.assertTrue(slide.confidential)
+
+	def test_slide_list_public_returns_only_not_confidential(self):
+		self.slide1.confidential = True
+		public_slides = self.project.current_presentation.slides.public
+		self.assertEqual(len(public_slides), 2)
+		for slide in public_slides:
+			self.assertFalse(slide.confidential)
