@@ -95,9 +95,10 @@ class Presentation(object):
 		with open(path, "wb") as file:
 			file.write(data)
 
-	def export_images(self, output_folder):
+	def export_images(self, output_folder, hide_confidential=False):
 		paths = [os.path.join(output_folder, str(slide.id) + ".jpg") for slide in self.slides]
-		ParserFacade.generateImageFromData(self.data, paths)
+		data = self.data_obfuscated if hide_confidential else self.data
+		ParserFacade.generateImageFromData(data, paths)
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
