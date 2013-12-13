@@ -242,6 +242,8 @@ def checkOut(project_id):
 		project = VCS().load_project(str(project_id))
 		user = request.form['username']
 		slide = request.form['slide_ID']
+		if project.get_slide(slide).confidential:
+			return show_project(project_id, warning = "Slide %s checkout failed. It's protected by confidentiality." % project.get_slide(slide).name, role = 'Presentation Creator', alert = 'danger')
 		if project.get_slide(slide).checkout_user != None:
 			return show_project(project_id, warning = "Slide %s checkout failed. It's already been checked out." % project.get_slide(slide).name, role = 'Presentation Creator', alert = 'danger')
 		project.get_slide(slide).checkout(user)
@@ -257,8 +259,10 @@ def slideCheckOut(project_id):
 	if request.method == 'POST':
 		project = VCS().load_project(str(project_id))
 		slide = request.form['slide_ID']
+		if project.get_slide(slide).confidential:
+			return show_project(project_id, warning = "Slide %s checkout failed. It's protected by confidentiality." % slide, role = 'Slide Creator', alert = 'danger')
 		if(project.get_slide(slide).checkout_user != None):
-			return show_project(project_id, warning = "Slide %s checkout failed. It's already checkd out." % slide, role = 'Slide Creator', alert = 'danger')
+			return show_project(project_id, warning = "Slide %s checkout failed. It's already checked out." % slide, role = 'Slide Creator', alert = 'danger')
 		project.get_slide(slide).checkout(session['username'])
 		return show_project(project_id, warning = "Slide %s has been checked out." % slide, role = 'Slide Creator', alert = 'success')
 	return illegal_action("error")
