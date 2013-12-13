@@ -38,13 +38,24 @@
   <div class="table">
 		<h3>Check-out Status for Current Presentation</h3>
 		<table class = "table">
-			<td><b>Slide Name</b></td>
-			<td><b>Checked Out By</td>
-			{% for slide in slideList %}
-			<tr>
-			<td>{{slide.name}}</td><td>{{slide.checkout_user}}</td>
-			</tr>
-			{% endfor %}
+			<thead>
+        <th>Slide Name</th>
+		    <th>Checked Out By</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for slide in slideList %}
+        <tr>
+          <td>{{slide.name}}</td>
+          <td>{{slide.checkout_user}}</td>
+          <td>
+            {% if slide.checkout_user %}
+            <a href="{{ url_for('deauthorizeCheckOut', project_id=project, slide_id=slide.id) }}">Undo Checkout</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
 		</table>
   </div>		
 		<br>
@@ -90,35 +101,7 @@
 	  	</div>	
 		</div>
     <br>
-    <div class = "links">
-    <a href = "#cancelCheckOutModal" data-toggle="modal" data-target="#cancelCheckOutModal">Cancel a CheckOut</a>
-  </div>
-      <div class="modal fade" id="cancelCheckOutModal" tabindex="-1" role="dialog" aria-labelledby="cancelCheckOutModal" aria-hidden="true">
-        <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Cancel a Check Out</h4>
-       </div>
-        <div class="modal-body">
-          <form class="form-horizontal" action = "{{ url_for("deauthorizeCheckOut", project_id = project) }}" method="post" name="deauthorizeCheckOutForm" role="form">
-            <div class="form-group">
-           <label for="slide_id">Slide Name</label>
-           <select class="form-control" name="slide_ID">
-            {% for slide in slideList %}
-              <option value="{{slide.id}}">{{loop.index}}) {{slide.name}}</option>            
-            {% endfor %}
-           </select>
-          </div>
-          <button type="submit" name ="removeUser" class="btn btn-primary">Deauthorize CheckOut</button>
-      </form>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-      </div>  
-    </div>
+
     {% else %}
     <div class = "alert alert-warning"><b>You don't have any slides in this project.  Why don't you make some?</b></div>
 

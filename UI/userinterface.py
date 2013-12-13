@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Flask, session, render_template, request, send_from_directory, redirect, url_for, Response
+from flask import Flask, flash, session, render_template, request, send_from_directory, redirect, url_for, Response
 from flask.ext.bootstrap import Bootstrap
 import os
 from werkzeug import secure_filename
@@ -266,18 +266,24 @@ def presentation(project_id):
 
 #If I want to revoke a check-out.  I'll need this method to do that.  I'll get the slide info that I need from the VCS in the template call, then 
 #tell the VCS to deauthroize it.
-@app.route("/project/<int:project_id>/deauthorized", methods = ['POST'])
-def deauthorizeCheckOut(project_id):
+@app.route("/project/<int:project_id>/deauthorized/<int:slide_id>")
+def deauthorizeCheckOut(project_id, slide_id):
 	if not 'username' in session:
 		return render_template("login.html", warning = "Please log-in to the system.")
-	if dbc.getRole(project_id, session['username']) != 'Project Manager' and dbc.getRole(project_id, session['username']) != 'Presentation Creator':
+	if not slide_id:
+		return illegal_action("error")
+	
+	slide = VCS().load_project(str(project_id)).get_slide(slide_id)
+	if not slide.checkout_user:
+		return illegal_action("error") 
+	print slide.checkout_user
+	print session['username']
+	if slide.checkout_user != session['username'] and dbc.getRole(project_id, session['username']) != 'Project Manager' and dbc.getRole(project_id, session['username']) != 'Presentation Creator':
 		return not_allowed("error")
-	if request.method == 'POST':
-		slide_id = request.form['slide_ID']
-		slide = VCS().load_project(str(project_id)).get_slide(slide_id)
-		slide.cancel_checkout()
-		return show_project(project_id, warning = "Slide %s checkout has been removed" % slide.name, role = 'Presentation Creator', alert = 'warning')
-	return illegal_action("error")
+	
+	slide.cancel_checkout()
+	flash("Slide %s checkout has been removed" % slide.name)
+	return redirect(url_for("viewPresentations", project_id=project_id))
 
 #Checkout routine for Project Managers and Slide Creators.  Get the user id I want from the post request and the slide Id and tell the VCS to check out the slide.
 #Of course, I ask the VCS first if I can do that.
