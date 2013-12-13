@@ -43,6 +43,7 @@ class Presentation(object):
 	def __init__(self, project, **data):
 		self._id = data.get('id', -1)
 		self._name = data['name']
+		self._created_at = data['created_at']
 		self._project = project
 		self._repo = project._repo
 
@@ -55,6 +56,11 @@ class Presentation(object):
 	def name(self):
 		"Returns this presentation's given name"
 		return self._name
+
+	@property
+	def created_at(self):
+		"Returns the time this presentation was created"
+		return self._created_at
 
 	@property
 	def project(self):
@@ -72,11 +78,18 @@ class Presentation(object):
 	@property
 	def data(self):
 		"Returns the presentation data with all the slides merged together"
-		return ParserFacade.mergeSlides(self.slides.data)
+		slide_data = self.slides.data
+		if not slide_data:
+			return ""
+		return ParserFacade.mergeSlides(slide_data)
 
 	@property
 	def data_obfuscated(self):
 		"Returns the presentation data, with all confidential slides turned into dummy warning messages"
+		slides = self.slides
+		if not slides:
+			return ""
+
 		confidential_slide_data = None
 		slide_data = []
 		for slide in self.slides:
@@ -104,7 +117,8 @@ class Presentation(object):
 		"""
 		paths = [os.path.join(output_folder, str(slide.id) + ".jpg") for slide in self.slides]
 		data = self.data_obfuscated if hide_confidential else self.data
-		ParserFacade.generateImageFromData(data, paths)
+		if data:
+			ParserFacade.generateImageFromData(data, paths)
 
 	def is_persisted(self):
 		"Returns true if this slide is persisted. Otherwise returns false."
@@ -297,7 +311,7 @@ class FileRepository(object):
 
 			c.execute("""
 				CREATE TABLE presentations
-				(id integer primary key autoincrement, name text, presentation_type integer)
+				(id integer primary key autoincrement, name text, presentation_type integer, created_at string)
 				""")
 
 			c.execute("""
@@ -317,8 +331,8 @@ class FileRepository(object):
 
 			# Create the current presentation
 			c.execute("""
-				INSERT INTO presentations (name, presentation_type)
-				VALUES (?, ?)
+				INSERT INTO presentations (name, presentation_type, created_at)
+				VALUES (?, ?, datetime('now'))
 				""", ["current", TYPE_CURRENT])
 
 	def persist_presentation(self, current_presentation, new_name):
@@ -328,8 +342,8 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				INSERT INTO presentations (name, presentation_type)
-				VALUES (?, ?)
+				INSERT INTO presentations (name, presentation_type, created_at)
+				VALUES (?, ?, datetime('now'))
 				""", [new_name, TYPE_PERSISTED])
 			new_presentation_id = c.lastrowid
 
@@ -370,7 +384,7 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT id, name
+				SELECT id, name, created_at
 				FROM presentations
 				WHERE presentation_type = ?
 				""", [TYPE_CURRENT])
@@ -378,9 +392,11 @@ class FileRepository(object):
 			data = c.fetchone()
 			pid = data[0]
 			name = data[1]
+			created_at = data[2]
 			presentation_data = {
 				'id': pid,
-				'name': name
+				'name': name,
+				'created_at': created_at
 			}
 
 			return CurrentPresentation(self.project, **presentation_data)
@@ -392,7 +408,7 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT id, name
+				SELECT id, name, created_at
 				FROM presentations
 				WHERE presentation_type = ?
 				ORDER BY id ASC
@@ -401,10 +417,12 @@ class FileRepository(object):
 			for row in c.fetchall():
 				pid = row[0]
 				name = row[1]
+				created_at = row[2]
 
 				presentation_data = {
 					'id': pid,
-					'name': name
+					'name': name,
+					'created_at': created_at
 				}
 
 				presentations.append(PersistedPresentation(self.project, **presentation_data))
@@ -416,7 +434,7 @@ class FileRepository(object):
 			c = conn.cursor()
 
 			c.execute("""
-				SELECT name, presentation_type
+				SELECT name, presentation_type, created_at
 				FROM presentations
 				WHERE id = ?
 				""", [pid])
@@ -424,9 +442,11 @@ class FileRepository(object):
 			data = c.fetchone()
 			name = data[0]
 			presentation_type = data[1]
+			created_at = data[2]
 			presentation_data = {
 				'id': pid,
-				'name': name
+				'name': name,
+				'created_at': created_at 
 			}
 
 			if presentation_type == TYPE_CURRENT:

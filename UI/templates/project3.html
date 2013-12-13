@@ -9,19 +9,25 @@
 
 <div class="table">
   <table class="table">
-    <tr>
-      <td><h4>Presentation Name</h4></td>
-    </tr>
-    <tr>
-      <td>
-        <a href = "{{url_for("viewSlides", project_id = project, presentation_id = current.id)}}">{{current.name}}</a>
-      </td>
-    </tr>
-    {% for presentation in presentationList|reverse %}
+    <thead>
       <tr>
-        <td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</td>
+        <th>Presentation Name</th>
+        <th>Creation Date</th>
       </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <a href = "{{url_for("viewSlides", project_id = project, presentation_id = current.id)}}">{{current.name}}</a>
+        </td>
+        <td>{{ current.created_at }}</td>
+      </tr>
+      {% for presentation in presentationList|reverse %}
+        <tr>
+          <td><a href = "{{url_for("viewSlides", project_id = project, presentation_id = presentation.id)}}">{{presentation.name}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
   </table>
 </div>
 
