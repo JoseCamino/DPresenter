@@ -140,7 +140,7 @@
       <form class="form-horizontal" action = "{{url_for("removeConfidentialTag", project_id = project)}}" method="post" name="removeConfidentialForm" role="form">
       <div class="form-group">
         <select class="form-control" name="slide_id">
-           {% for slide in confidential %}
+           {% for (idx,slide) in confidential %}
            <option value = "{{slide.id}}">{{slide.name}}</option>
            {% endfor %}
         </select>
