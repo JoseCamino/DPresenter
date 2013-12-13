@@ -21,7 +21,7 @@
 <div class = table>
 	<button type="button" class= "button btn btn-success" onclick ="location.href='{{url_for("downloadPresentation", project_id = project_id, presentation_id = presentation_id)}}'">Download  Presentation</a>
 </div>
-
+<div class ="carousel">
 	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
@@ -48,6 +48,7 @@
     {% endif %}
     {% endfor %}
   </div>
+</div>
 
   <!-- Controls -->
   <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
@@ -75,6 +76,11 @@
   .links
   {
     padding-left:50px;
+  }
+  .carousel
+  {
+    padding-left:50px;
+    width:800px;
   }
 	</style>
 {% endblock %}
