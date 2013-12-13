@@ -1,0 +1,20 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+<style>
+</style>
+{% endblock %}
+
+{% block navbar %}
+  <div class="page-header">
+    <a href="{{ url_for("index") }}">
+    	<img src = "{{url_for('static', filename="header.png")}}" width="800" depth="200">
+    </a>
+    {% if logged_in() %}
+    	<a href="{{ url_for("logout") }}">Logout</a>
+    {% endif %}
+  </div>
+{% endblock %}

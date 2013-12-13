@@ -14,6 +14,9 @@ ALLOWED_EXTENSIONS = set(['pptx'])
 app.secret_key = dbc.giveMetheSecretKey()
 Bootstrap(app)
 
+# Allow a way to determine if the user is logged in
+app.jinja_env.globals.update(logged_in=(lambda: 'username' in session))
+
 def relative_path(path):
 	return os.path.join(os.path.dirname(__file__), path)
 

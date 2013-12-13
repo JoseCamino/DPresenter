@@ -1,15 +1,11 @@
-	{% extends "bootstrap/base.html" %}
-  {% import "bootstrap/fixes.html" as fixes %}
+{% extends "base.html" %}
 
-  {% block content %}
+{% block content %}
   {% if warning == "You are now registered into the Dynamic Presenter system!" %}
   <div class="alert alert-success"><b>{{warning}}</b></div>
   {% elif warning|length != 0 %}
   <div class="alert alert-danger"><b>{{ warning }}</b></div>
   {% endif %}
-  <div class="images">
-    <img src = "{{url_for('static', filename="header.png")}}" width="800" depth="200">
-</div>
 	<form class="form-horizontal" action = "{{url_for("index")}}" method="post" name="loginForm" role="form">
   <div class="form-group">
     <p class="padding"><legend>Login</legend></p>
@@ -29,9 +25,11 @@
   <p class="align1"><button type="submit" name="login" class="btn btn-primary">Log in</button></p>
 </form>
 
-  <p class="align2"><button class="btn btn-success" data-toggle="modal" data-target="#registrationModal"></p>
-  Register Here
-</button>
+<p class="align2">
+  <button class="btn btn-success" data-toggle="modal" data-target="#registrationModal">
+    Register Here
+  </button>
+</p>
 
 <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModal" aria-hidden="true">
   <div class="modal-dialog">
