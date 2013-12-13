@@ -17,10 +17,6 @@ class VCSProject(object):
 		self._repo = FileRepository(self)
 
 	@property
-	def type(self):
-		return "presentation" # Only presentation projects are supported at this time
-
-	@property
 	def current_presentation(self):
 		"Returns the current non-persisted presentation"
 		return self._repo.load_current_presentation()
@@ -52,14 +48,17 @@ class Presentation(object):
 
 	@property
 	def id(self):
-	    return self._id
+		"Returns the unique presentation id"
+		return self._id
 
 	@property
 	def name(self):
+		"Returns this presentation's given name"
 		return self._name
 
 	@property
 	def project(self):
+		"Returns the VCSProject this presentation is assigned to"
 		return self._project
 
 	@property
@@ -91,11 +90,18 @@ class Presentation(object):
 		return ParserFacade.mergeSlides(slide_data)
 
 	def write_data_to_file(self, path):
+		"Write the slide data to a file. Currently doesn't hide confidential data"
 		data = ParserFacade.mergeSlides(self.slides.data)
 		with open(path, "wb") as file:
 			file.write(data)
 
 	def export_images(self, output_folder, hide_confidential=False):
+		"""
+		Exports all slide images to the given output folder. 
+		Each slide will have the filename SLIDEID.jpg.
+		If hide_confidential is true, then confidential slides will be replaced by
+		a "this slide is confidential" dummy slide image.
+		"""
 		paths = [os.path.join(output_folder, str(slide.id) + ".jpg") for slide in self.slides]
 		data = self.data_obfuscated if hide_confidential else self.data
 		ParserFacade.generateImageFromData(data, paths)
@@ -178,10 +184,12 @@ class Slide(object):
 
 	@property
 	def id(self):
+		"Returns this slide's id"
 		return self._id
 
 	@property
 	def name(self):
+		"Returns this slide's name"
 		return self._name
 
 	@property
@@ -190,6 +198,7 @@ class Slide(object):
 
 	@property
 	def original(self):
+		"Returns the original slide that this slide is based off"
 		if not self._original_slide_id:
 			return None
 
