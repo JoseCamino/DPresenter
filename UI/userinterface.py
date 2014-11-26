@@ -482,7 +482,7 @@ def isFileAllowed(filename):
 #Port: Listening Port the System will Check
 #Host: add the parameter host='0.0.0.0' to get the server to listen to outside requests.
 def run_app():
-	app.run(port=80, host='0.0.0.0')
+	app.run(port=80)
 
 if __name__ == "__main__":
     run_app()
