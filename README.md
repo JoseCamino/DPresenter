@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 DynamicPresenter
 ================
 
@@ -69,3 +70,9 @@ print("Created slides: ")
 for (i, slide) in enumerate(presentation.slides):
 	print("Slide #%d: %s" % (i, slide.data))
 ```
+=======
+DPresenter
+==========
+
+Senior Project
+>>>>>>> origin/master
