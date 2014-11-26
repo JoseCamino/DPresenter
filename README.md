@@ -1,4 +1,0 @@
-DPresenter
-==========
-
-Senior Project
